@@ -1,0 +1,950 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>THIRSTBOUND - The Drying Valley</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    background: #101918;
+    color: #e5eee6;
+    font-family: monospace;
+    display: flex;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+#game-container {
+    width: 950px;
+    max-width: 100%;
+}
+
+h1 {
+    color: #9dd6b0;
+    letter-spacing: 5px;
+    margin-bottom: 5px;
+}
+
+.subtitle {
+    color: #8b9e92;
+    margin-bottom: 20px;
+}
+
+#game-layout {
+    display: grid;
+    grid-template-columns: 1fr 220px;
+    gap: 15px;
+}
+
+canvas {
+    width: 100%;
+    height: auto;
+    border: 3px solid #627a69;
+    background: #55513e;
+    image-rendering: pixelated;
+}
+
+#sidebar {
+    background: #1b2b27;
+    padding: 15px;
+    border: 1px solid #466052;
+}
+
+h2 {
+    font-size: 14px;
+    color: #a7d9b7;
+    margin-top: 0;
+}
+
+p, li {
+    font-size: 11px;
+    line-height: 1.7;
+    color: #c2d0c7;
+}
+
+#quest-list {
+    padding-left: 17px;
+}
+
+.completed {
+    color: #8fdaa4;
+    text-decoration: line-through;
+}
+
+#dialogue {
+    background: #1b2b27;
+    border: 1px solid #466052;
+    padding: 15px;
+    margin-top: 12px;
+    min-height: 85px;
+    font-size: 12px;
+    line-height: 1.7;
+}
+
+#speaker {
+    color: #9dd6b0;
+    font-weight: bold;
+}
+
+#controls {
+    color: #899b91;
+    font-size: 11px;
+    margin-top: 10px;
+}
+
+button {
+    background: #315e4a;
+    border: 1px solid #82b89a;
+    color: white;
+    padding: 10px;
+    cursor: pointer;
+    font-family: monospace;
+}
+
+button:hover {
+    background: #42785d;
+}
+
+@media(max-width: 700px) {
+    #game-layout {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div id="game-container">
+
+    <h1>THIRSTBOUND</h1>
+    <div class="subtitle">
+        Chapter 1: The Drying Valley
+    </div>
+
+    <div id="game-layout">
+
+        <div>
+            <canvas id="game" width="768" height="512"></canvas>
+
+            <div id="dialogue">
+                <div id="speaker">Rin - Village Guide</div>
+                <div id="message">
+                    Our valley is dying. The river has dried up,
+                    our forests are gone and our water systems
+                    have collapsed. Please help us.
+                </div>
+            </div>
+
+            <div id="controls">
+                WASD / Arrow Keys: Move<br>
+                E: Interact<br>
+                ENTER: Close dialogue
+            </div>
+        </div>
+
+        <div id="sidebar">
+
+            <h2>PLAYER STATUS</h2>
+
+            <p>Water restored: <span id="water">0</span>/4</p>
+            <p>Community trust: <span id="trust">0</span></p>
+
+            <hr>
+
+            <h2>QUESTS</h2>
+
+            <ol id="quest-list">
+                <li id="q-forest">Investigate the forest</li>
+                <li id="q-pipe">Repair the pipeline</li>
+                <li id="q-storage">Build water storage</li>
+                <li id="q-corruption">Investigate corruption</li>
+                <li id="q-guide">Speak with Rin</li>
+            </ol>
+
+            <hr>
+
+            <h2>FIELD NOTES</h2>
+
+            <p id="notes">
+                You have not discovered anything yet.
+            </p>
+
+            <hr>
+
+            <h2>OBJECTIVE</h2>
+
+            <p>
+                Discover why the valley is experiencing
+                water scarcity and help restore its
+                water supply.
+            </p>
+
+            <button onclick="restartGame()">Restart Game</button>
+
+        </div>
+
+    </div>
+</div>
+
+<script>
+
+// ======================================
+// INITIAL SETUP
+// ======================================
+
+const canvas = document.getElementById("game");
+const ctx = canvas.getContext("2d");
+
+const TILE = 32;
+
+const player = {
+    x: 3 * TILE,
+    y: 7 * TILE,
+    speed: 2.5
+};
+
+const keys = {};
+
+let dialogueOpen = false;
+let completed = {};
+let water = 0;
+let trust = 0;
+let notes = [];
+
+
+// ======================================
+// WORLD MAP
+// ======================================
+
+// 0 = Grass / ground
+// 1 = Rock / obstacle
+// 2 = Dry riverbed
+
+const map = Array.from(
+    { length: 16 },
+    () => Array(24).fill(0)
+);
+
+// Map borders
+for (let y = 0; y < 16; y++) {
+    for (let x = 0; x < 24; x++) {
+        if (x === 0 || y === 0 || x === 23 || y === 15) {
+            map[y][x] = 1;
+        }
+    }
+}
+
+// Ruined forest
+for (let y = 2; y < 6; y++) {
+    for (let x = 2; x < 8; x++) {
+        if ((x + y) % 3 === 0) {
+            map[y][x] = 1;
+        }
+    }
+}
+
+// River
+for (let y = 2; y < 14; y++) {
+    map[y][18] = 2;
+}
+
+// Rubble
+[
+    [9,3], [10,3], [9,4],
+    [13,9], [14,9],
+    [5,11], [6,11], [7,11]
+].forEach(([x,y]) => map[y][x] = 1);
+
+
+// ======================================
+// WORLD OBJECTS
+// ======================================
+
+const objects = [
+
+    {
+        id: "forest",
+        name: "Damaged Forest",
+        x: 5 * TILE,
+        y: 3 * TILE,
+        type: "marker"
+    },
+
+    {
+        id: "pipe",
+        name: "Broken Pipeline",
+        x: 12 * TILE,
+        y: 7 * TILE,
+        type: "marker"
+    },
+
+    {
+        id: "storage",
+        name: "Empty Reservoir",
+        x: 20 * TILE,
+        y: 10 * TILE,
+        type: "marker"
+    },
+
+    {
+        id: "corruption",
+        name: "Water Office",
+        x: 20 * TILE,
+        y: 3 * TILE,
+        type: "marker"
+    },
+
+    {
+        id: "guide",
+        name: "Rin",
+        x: 4 * TILE,
+        y: 8 * TILE,
+        type: "npc"
+    },
+
+    {
+        id: "farmer",
+        name: "Mara",
+        x: 10 * TILE,
+        y: 12 * TILE,
+        type: "npc"
+    }
+
+];
+
+
+// ======================================
+// INPUT
+// ======================================
+
+window.addEventListener("keydown", e => {
+
+    keys[e.key.toLowerCase()] = true;
+
+    if (e.key.toLowerCase() === "e" && !dialogueOpen) {
+        interact();
+    }
+
+    if (e.key === "Enter" && dialogueOpen) {
+        dialogueOpen = false;
+    }
+
+});
+
+window.addEventListener("keyup", e => {
+    keys[e.key.toLowerCase()] = false;
+});
+
+
+// ======================================
+// COLLISION
+// ======================================
+
+function isSolid(x, y) {
+
+    const tx = Math.floor(x / TILE);
+    const ty = Math.floor(y / TILE);
+
+    if (
+        tx < 0 || ty < 0 ||
+        tx >= 24 || ty >= 16
+    ) {
+        return true;
+    }
+
+    return map[ty][tx] === 1;
+}
+
+function canMove(x, y) {
+
+    const radius = 9;
+
+    return !(
+        isSolid(x-radius, y-radius) ||
+        isSolid(x+radius, y-radius) ||
+        isSolid(x-radius, y+radius) ||
+        isSolid(x+radius, y+radius)
+    );
+
+}
+
+
+// ======================================
+// MOVEMENT
+// ======================================
+
+function updatePlayer() {
+
+    if (dialogueOpen) return;
+
+    let dx = 0;
+    let dy = 0;
+
+    if (keys["w"] || keys["arrowup"]) dy--;
+    if (keys["s"] || keys["arrowdown"]) dy++;
+    if (keys["a"] || keys["arrowleft"]) dx--;
+    if (keys["d"] || keys["arrowright"]) dx++;
+
+    if (dx !== 0 && dy !== 0) {
+        dx *= 0.707;
+        dy *= 0.707;
+    }
+
+    let nx = player.x + dx * player.speed;
+    let ny = player.y + dy * player.speed;
+
+    if (canMove(nx, player.y)) {
+        player.x = nx;
+    }
+
+    if (canMove(player.x, ny)) {
+        player.y = ny;
+    }
+
+}
+
+
+// ======================================
+// DIALOGUE SYSTEM
+// ======================================
+
+function dialogue(speaker, text) {
+
+    document.getElementById("speaker").textContent = speaker;
+    document.getElementById("message").textContent = text;
+
+    dialogueOpen = true;
+
+}
+
+function addNote(text) {
+
+    if (!notes.includes(text)) {
+        notes.push(text);
+    }
+
+    document.getElementById("notes").textContent =
+        notes.join(" ");
+}
+
+
+// ======================================
+// QUEST SYSTEM
+// ======================================
+
+function completeQuest(id) {
+
+    completed[id] = true;
+
+    const element = document.getElementById("q-" + id);
+
+    if (element) {
+        element.classList.add("completed");
+    }
+
+    document.getElementById("water").textContent = water;
+    document.getElementById("trust").textContent = trust;
+
+}
+
+function interact() {
+
+    let nearest = null;
+    let nearestDistance = 45;
+
+    for (const obj of objects) {
+
+        const distance = Math.hypot(
+            player.x - obj.x,
+            player.y - obj.y
+        );
+
+        if (distance < nearestDistance) {
+            nearest = obj;
+            nearestDistance = distance;
+        }
+
+    }
+
+    if (!nearest) return;
+
+    switch (nearest.id) {
+
+        // FOREST QUEST
+        case "forest":
+
+            if (!completed.forest) {
+
+                water++;
+                trust++;
+
+                completeQuest("forest");
+
+                dialogue(
+                    "Forest Survey",
+                    "The forests were cleared for timber and farmland. Trees help hold soil together and allow rainwater to soak into the ground. Without them, erosion increases and groundwater recharge can decrease. Replanting native trees and protecting watersheds can help restore water sources."
+                );
+
+                addNote(
+                    "DEFORESTATION: Removing trees damages watersheds, increases erosion and can reduce groundwater recharge."
+                );
+
+            } else {
+
+                dialogue(
+                    "Forest Survey",
+                    "The community has begun planting native trees. Restoring a forest takes years, so protecting the new growth is essential."
+                );
+
+            }
+
+            break;
+
+
+        // PIPELINE QUEST
+        case "pipe":
+
+            if (!completed.pipe) {
+
+                water++;
+                trust++;
+
+                completeQuest("pipe");
+
+                dialogue(
+                    "Broken Pipeline",
+                    "This pipeline has been leaking for months. The village has no maintenance crew or repair budget. Water is being wasted before it reaches people's homes. Repairing pipes and regularly maintaining infrastructure helps ensure available water reaches communities."
+                );
+
+                addNote(
+                    "POOR INFRASTRUCTURE: Missing or damaged pipes, pumps and treatment facilities prevent communities from accessing available water."
+                );
+
+            } else {
+
+                dialogue(
+                    "Pipeline",
+                    "The leak has been repaired. The village still needs a maintenance team to prevent future breakdowns."
+                );
+
+            }
+
+            break;
+
+
+        // STORAGE QUEST
+        case "storage":
+
+            if (!completed.storage) {
+
+                water++;
+                trust++;
+
+                completeQuest("storage");
+
+                dialogue(
+                    "Reservoir Project",
+                    "The village has nowhere to store rainwater. You organise the construction of a covered storage tank and a water treatment point. Rainwater harvesting, storage and treatment can help communities prepare for dry seasons."
+                );
+
+                addNote(
+                    "LACK OF STORAGE: Without reservoirs, rainwater collection and treatment facilities, communities struggle to manage seasonal shortages."
+                );
+
+            } else {
+
+                dialogue(
+                    "Reservoir Project",
+                    "The new storage tank is ready. It must be kept clean and regularly maintained."
+                );
+
+            }
+
+            break;
+
+
+        // CORRUPTION QUEST
+        case "corruption":
+
+            if (!completed.corruption) {
+
+                water++;
+                trust += 2;
+
+                completeQuest("corruption");
+
+                dialogue(
+                    "Water Office Records",
+                    "You discover that officials diverted public water funds and gave priority access to powerful farms. This is corruption. Money intended for water infrastructure was misused, while poorer communities were neglected. Transparent budgets, public records and community oversight can help prevent this."
+                );
+
+                addNote(
+                    "CORRUPTION: Misused funds and unfair distribution prevent communities from receiving the water services they need."
+                );
+
+            } else {
+
+                dialogue(
+                    "Water Office",
+                    "The records are now public. The community can monitor water spending and demand fair distribution."
+                );
+
+            }
+
+            break;
+
+
+        // GUIDE
+        case "guide":
+
+            completeQuest("guide");
+
+            dialogue(
+                "Rin - Village Guide",
+                "Water scarcity is not always simply about a lack of rainfall. Environmental destruction, damaged infrastructure, pollution, poor management and corruption can all contribute. These problems often reinforce one another. We need to address them together."
+            );
+
+            addNote(
+                "WATER SCARCITY: Environmental, economic and political causes are interconnected."
+            );
+
+            break;
+
+
+        // FARMER
+        case "farmer":
+
+            dialogue(
+                "Mara - Local Farmer",
+                "Our irrigation channels have cracked. We waste enormous amounts of water trying to reach our crops. Efficient irrigation, repairing canals and growing crops suited to local conditions can reduce water demand."
+            );
+
+            addNote(
+                "INEFFICIENT IRRIGATION: Damaged canals and inefficient watering methods can waste valuable freshwater."
+            );
+
+            break;
+
+    }
+
+    checkEnding();
+
+}
+
+
+// ======================================
+// ENDING
+// ======================================
+
+function checkEnding() {
+
+    const required = [
+        "forest",
+        "pipe",
+        "storage",
+        "corruption",
+        "guide"
+    ];
+
+    if (required.every(id => completed[id])) {
+
+        setTimeout(() => {
+
+            dialogue(
+                "CHAPTER COMPLETE",
+                "You have helped the valley begin its recovery. But restoring water security requires long-term action: protecting forests, maintaining infrastructure, investing in storage and treatment, and ensuring fair governance. Water scarcity is a complex problem, and solving it requires communities and governments to work together."
+            );
+
+        }, 100);
+
+    }
+
+}
+
+
+// ======================================
+// DRAWING
+// ======================================
+
+function drawGround(x, y) {
+
+    const px = x * TILE;
+    const py = y * TILE;
+
+    if (map[y][x] === 2) {
+
+        ctx.fillStyle = "#354d49";
+        ctx.fillRect(px, py, TILE, TILE);
+
+        ctx.fillStyle = "#526b61";
+        ctx.fillRect(px+5, py+8, 8, 3);
+
+        return;
+
+    }
+
+    if (map[y][x] === 1) {
+
+        ctx.fillStyle = "#474437";
+        ctx.fillRect(px, py, TILE, TILE);
+
+        ctx.fillStyle = "#71654f";
+        ctx.fillRect(px+5, py+7, 16, 9);
+
+        ctx.fillStyle = "#292b25";
+        ctx.fillRect(px+17, py+21, 9, 5);
+
+        return;
+
+    }
+
+    ctx.fillStyle =
+        (x+y)%2 === 0 ? "#555441" : "#5d5945";
+
+    ctx.fillRect(px, py, TILE, TILE);
+
+}
+
+function drawTree(x, y) {
+
+    ctx.fillStyle = "#453b2c";
+    ctx.fillRect(x-3, y, 7, 17);
+
+    ctx.fillStyle = "#755a40";
+    ctx.fillRect(x-13, y+6, 24, 5);
+
+}
+
+function drawPerson(x, y, colour, name) {
+
+    // Body
+    ctx.fillStyle = colour;
+    ctx.fillRect(x-7, y-7, 14, 17);
+
+    // Head
+    ctx.fillStyle = "#c89b75";
+    ctx.fillRect(x-5, y-17, 10, 10);
+
+    // Hair
+    ctx.fillStyle = "#292722";
+    ctx.fillRect(x-6, y-19, 12, 4);
+
+    // Feet
+    ctx.fillStyle = "#292722";
+    ctx.fillRect(x-7, y+9, 5, 5);
+    ctx.fillRect(x+2, y+9, 5, 5);
+
+    ctx.fillStyle = "#eeeeee";
+    ctx.font = "10px monospace";
+    ctx.textAlign = "center";
+    ctx.fillText(name, x, y-24);
+
+}
+
+function drawObject(obj) {
+
+    const x = obj.x;
+    const y = obj.y;
+
+    if (obj.id === "forest") {
+
+        drawTree(x-7, y);
+        drawTree(x+13, y+5);
+
+    }
+
+    if (obj.id === "pipe") {
+
+        ctx.fillStyle = "#a0a9a0";
+        ctx.fillRect(x-18, y-5, 36, 10);
+
+        ctx.fillStyle = "#4b7775";
+        ctx.fillRect(x-3, y-10, 8, 20);
+
+    }
+
+    if (obj.id === "storage") {
+
+        ctx.fillStyle = "#858e83";
+        ctx.fillRect(x-17, y-17, 34, 34);
+
+        ctx.fillStyle = "#364c48";
+        ctx.fillRect(x-12, y-8, 24, 20);
+
+    }
+
+    if (obj.id === "corruption") {
+
+        ctx.fillStyle = "#806a49";
+        ctx.fillRect(x-15, y-16, 30, 30);
+
+        ctx.fillStyle = "#d9c99b";
+        ctx.fillRect(x-10, y-11, 20, 20);
+
+    }
+
+    if (obj.id === "guide") {
+        drawPerson(x, y, "#477f79", "Rin");
+    }
+
+    if (obj.id === "farmer") {
+        drawPerson(x, y, "#9b7449", "Mara");
+    }
+
+}
+
+
+// ======================================
+// RENDER LOOP
+// ======================================
+
+function render() {
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Draw map
+    for (let y = 0; y < 16; y++) {
+
+        for (let x = 0; x < 24; x++) {
+
+            drawGround(x, y);
+
+        }
+
+    }
+
+    // Destroyed forest
+    [
+        [2,2], [6,2], [3,5],
+        [7,4], [8,6], [2,7]
+    ].forEach(([x,y]) => {
+
+        drawTree(
+            x*TILE+16,
+            y*TILE+16
+        );
+
+    });
+
+    // Dry river
+    ctx.fillStyle = "#695c46";
+    ctx.fillRect(18*TILE, 2*TILE, 5*TILE, 10*TILE);
+
+    // Remaining puddles
+    ctx.fillStyle = "#58766e";
+    ctx.fillRect(20*TILE+5, 7*TILE+8, 13, 5);
+
+    // Ruined buildings
+    ctx.fillStyle = "#75634c";
+    ctx.fillRect(2*TILE, 10*TILE, 3*TILE, 2*TILE);
+
+    ctx.fillStyle = "#574839";
+    ctx.fillRect(8*TILE, 8*TILE, 3*TILE, 2*TILE);
+
+    // Objects
+    objects.forEach(drawObject);
+
+    // Player
+    drawPerson(
+        player.x,
+        player.y,
+        "#4b91a5",
+        "You"
+    );
+
+    // Interaction prompt
+    if (!dialogueOpen) {
+
+        for (const obj of objects) {
+
+            const distance = Math.hypot(
+                player.x-obj.x,
+                player.y-obj.y
+            );
+
+            if (distance < 45) {
+
+                ctx.fillStyle = "white";
+                ctx.font = "11px monospace";
+                ctx.textAlign = "center";
+
+                ctx.fillText(
+                    "E - " + obj.name,
+                    player.x,
+                    player.y-35
+                );
+
+            }
+
+        }
+
+    }
+
+}
+
+
+// ======================================
+// GAME LOOP
+// ======================================
+
+function gameLoop() {
+
+    updatePlayer();
+    render();
+
+    requestAnimationFrame(gameLoop);
+
+}
+
+
+// ======================================
+// RESTART
+// ======================================
+
+function restartGame() {
+
+    player.x = 3*TILE;
+    player.y = 7*TILE;
+
+    completed = {};
+    water = 0;
+    trust = 0;
+    notes = [];
+
+    dialogueOpen = false;
+
+    document.getElementById("water").textContent = 0;
+    document.getElementById("trust").textContent = 0;
+
+    document.getElementById("notes").textContent =
+        "You have not discovered anything yet.";
+
+    document.querySelectorAll("#quest-list li").forEach(el => {
+        el.classList.remove("completed");
+    });
+
+    dialogue(
+        "Rin - Village Guide",
+        "Our valley is dying. The river has dried up, our forests are gone and our water systems have collapsed. Please help us."
+    );
+
+}
+
+
+// START GAME
+
+gameLoop();
+
+</script>
+
+</body>
+</html>
