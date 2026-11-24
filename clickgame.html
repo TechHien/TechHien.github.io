@@ -3,446 +3,537 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Water Scarcity: Find the Causes</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>water scarcity</title>
 
 <style>
 * { box-sizing: border-box; }
 
 body {
     margin: 0;
+    background: #e7f0e9;
+    color: #354b4a;
     font-family: Arial, sans-serif;
-    background: #dceef0;
-    color: #263c49;
 }
 
 header {
-    background: #234f62;
+    background: #315b65;
     color: white;
-    padding: 18px 24px;
+    padding: 16px 22px;
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    justify-content: space-between;
+    gap: 20px;
     flex-wrap: wrap;
-    gap: 12px;
 }
 
 header h1 {
+    font-size: 20px;
+    font-weight: 600;
     margin: 0;
-    font-size: 23px;
 }
 
 header p {
+    font-size: 12px;
+    color: #c6e1dc;
     margin: 5px 0 0;
-    color: #c7e4ec;
-    font-size: 13px;
-}
-
-button {
-    cursor: pointer;
-    font: inherit;
 }
 
 #reset {
+    background: #ffffff20;
     border: 1px solid #ffffff66;
-    background: transparent;
     color: white;
-    padding: 9px 15px;
-    border-radius: 8px;
+    padding: 9px 13px;
+    border-radius: 7px;
+    cursor: pointer;
 }
 
 main {
-    max-width: 1100px;
+    max-width: 1200px;
     margin: auto;
     padding: 20px;
 }
 
-.status {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 14px;
-    flex-wrap: wrap;
+/* water supply */
+
+.supply {
+    background: white;
+    border-radius: 12px;
+    padding: 12px 15px;
+    margin-bottom: 15px;
+    box-shadow: 0 3px 12px #304e4810;
 }
 
-.progress {
-    background: #c5dadd;
-    width: 190px;
-    height: 10px;
+.supply-top {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    margin-bottom: 9px;
+}
+
+.supply-track {
+    height: 15px;
+    background: #e0e9e6;
     border-radius: 20px;
     overflow: hidden;
 }
 
-#progressFill {
-    background: #279c91;
-    width: 0%;
+#waterFill {
     height: 100%;
-    transition: width .3s;
+    width: 0%;
+    background: linear-gradient(90deg, #53b9d4, #318fbd);
+    border-radius: 20px;
+    transition: width .8s;
 }
 
 .instructions {
-    margin-bottom: 15px;
-    color: #496572;
+    color: #708582;
+    font-size: 13px;
+    margin-bottom: 13px;
 }
 
-/* THE TOWN */
-
-#town {
-    position: relative;
-    height: 550px;
+#world {
+    width: 100%;
     overflow: hidden;
     border: 5px solid white;
-    border-radius: 15px;
-    background: #a9d8b0;
-    box-shadow: 0 5px 20px #264c5930;
+    border-radius: 14px;
+    box-shadow: 0 5px 20px #304e4820;
+    background: #acd58f;
 }
 
-.grass {
-    position: absolute;
-    inset: 0;
-    background:
-        radial-gradient(ellipse at 15% 25%, #8fcf91 0 13%, transparent 14%),
-        radial-gradient(ellipse at 80% 70%, #91c995 0 17%, transparent 18%),
-        #b3dba5;
-}
-
-.road {
-    position: absolute;
-    background: #777f82;
-    border: 3px solid #626d70;
-}
-
-.road.horizontal {
-    top: 65%;
-    height: 95px;
+#town {
+    display: block;
     width: 100%;
-}
-
-.road.vertical {
-    left: 44%;
-    width: 100px;
-    height: 100%;
-}
-
-.road::after {
-    content: "";
-    position: absolute;
-    background: repeating-linear-gradient(
-        90deg, transparent 0 30px,
-        #eee 30px 55px,
-        transparent 55px 85px
-    );
-    height: 4px;
-    top: 45px;
-    left: 0;
-    right: 0;
-}
-
-.road.vertical::after {
-    background: repeating-linear-gradient(
-        180deg, transparent 0 30px,
-        #eee 30px 55px,
-        transparent 55px 85px
-    );
     height: auto;
-    width: 4px;
-    top: 0;
-    bottom: 0;
-    left: 45px;
 }
 
 .building {
-    position: absolute;
-    width: 100px;
-    height: 90px;
-    background: #e6b879;
-    border: 4px solid #8c684b;
-    border-radius: 5px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 12px;
-    font-weight: bold;
-    text-align: center;
-    box-shadow: 4px 5px #0002;
+    stroke: #806b51;
+    stroke-width: 3;
 }
 
-.building::before {
-    content: "";
-    position: absolute;
-    top: -20px;
-    left: -5px;
-    width: 102px;
-    height: 24px;
-    background: #ad6651;
-    clip-path: polygon(50% 0, 100% 100%, 0 100%);
-}
-
-.window {
-    position: absolute;
-    background: #91d4df;
-    border: 2px solid #80664b;
-    width: 20px;
-    height: 25px;
-    top: 23px;
-}
-
-.window.left { left: 13px; }
-.window.right { right: 13px; }
-
-.building-label {
-    position: absolute;
-    bottom: 5px;
-}
-
-.tree {
-    position: absolute;
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    background: #347d52;
-    box-shadow: 0 12px 0 -5px #795b3b;
-}
-
-.object {
-    position: absolute;
-    z-index: 4;
+.hotspot {
     cursor: pointer;
-    border: 0;
-    background: transparent;
-    transition: transform .2s;
-    font-size: 30px;
-    padding: 7px;
+    transition: filter .2s;
 }
 
-.object:hover {
-    transform: scale(1.2);
+.hotspot:hover {
+    filter: brightness(1.12);
 }
 
-.object.found {
-    filter: grayscale(1);
+.hotspot.found {
     opacity: .5;
     cursor: default;
 }
 
-.object.found::after {
-    content: "FOUND";
-    display: block;
-    font-size: 9px;
-    background: #267d61;
-    color: white;
-    border-radius: 5px;
-    padding: 3px;
-    font-weight: bold;
+.hotspot .outline {
+    fill: transparent;
+    stroke: transparent;
+    stroke-width: 5;
 }
+
+.hotspot:hover .outline {
+    stroke: #fff4b0;
+}
+
+/* pedestrians */
 
 .person {
-    position: absolute;
-    font-size: 20px;
-    z-index: 2;
+    pointer-events: none;
 }
 
-.lake {
-    position: absolute;
-    background: #4da8ce;
-    width: 180px;
-    height: 75px;
-    border-radius: 50%;
-    bottom: 15px;
-    right: 20px;
-    border: 5px solid #d2e9e9;
+.walk-right {
+    animation: walkRight var(--speed) linear infinite;
 }
 
-.sign {
-    position: absolute;
-    bottom: 5px;
-    left: 10px;
-    background: #f7f0d4;
-    padding: 8px;
-    border: 3px solid #856b4d;
-    font-size: 11px;
-    font-weight: bold;
-    transform: rotate(-3deg);
+.walk-left {
+    animation: walkLeft var(--speed) linear infinite;
 }
 
-/* MODAL */
+.legs {
+    transform-box: fill-box;
+    transform-origin: top;
+    animation: legs .3s infinite alternate;
+}
+
+.legs.second {
+    animation-delay: .3s;
+}
+
+.arms {
+    transform-box: fill-box;
+    transform-origin: top;
+    animation: arms .3s infinite alternate;
+}
+
+.arms.second {
+    animation-delay: .3s;
+}
+
+@keyframes legs {
+    from { transform: rotate(-22deg); }
+    to { transform: rotate(22deg); }
+}
+
+@keyframes arms {
+    from { transform: rotate(18deg); }
+    to { transform: rotate(-18deg); }
+}
+
+@keyframes walkRight {
+    from { transform: translateX(-80px); }
+    to { transform: translateX(750px); }
+}
+
+@keyframes walkLeft {
+    from { transform: translateX(750px); }
+    to { transform: translateX(-80px); }
+}
+
+/* cars */
+
+.car {
+    animation: drive var(--speed) linear infinite;
+}
+
+@keyframes drive {
+    from { transform: translateX(-180px); }
+    to { transform: translateX(1250px); }
+}
+
+/* water pipes */
+
+.pipe {
+    fill: none;
+    stroke: #607782;
+    stroke-width: 16;
+    stroke-linejoin: round;
+    stroke-linecap: round;
+}
+
+.pipe-light {
+    fill: none;
+    stroke: #9aafb4;
+    stroke-width: 5;
+}
+
+.flow {
+    fill: none;
+    stroke: #4cc5eb;
+    stroke-width: 4;
+    stroke-dasharray: 10 12;
+    animation: flow 1s linear infinite;
+}
+
+@keyframes flow {
+    to { stroke-dashoffset: -22; }
+}
+
+.drip {
+    animation: drip 1s infinite;
+}
+
+@keyframes drip {
+    from { transform: translateY(-3px); opacity: 0; }
+    50% { opacity: 1; }
+    to { transform: translateY(15px); opacity: 0; }
+}
+
+/* airport */
+
+.runway {
+    fill: #626e72;
+    stroke: #49575b;
+    stroke-width: 3;
+}
+
+.runway-line {
+    stroke: #f4e8b8;
+    stroke-width: 4;
+    stroke-dasharray: 25 18;
+}
+
+/* modal */
 
 #modal {
     display: none;
     position: fixed;
     inset: 0;
-    background: #142e3bd9;
+    background: #142d35d9;
     z-index: 20;
-    justify-content: center;
     align-items: center;
+    justify-content: center;
     padding: 15px;
-    overflow-y: auto;
 }
 
-#modal.show { display: flex; }
+#modal.show {
+    display: flex;
+}
 
 .panel {
-    background: #f7fbfa;
+    background: #f8fbf8;
     width: 100%;
-    max-width: 650px;
-    padding: 25px;
-    border-radius: 16px;
+    max-width: 640px;
     max-height: 90vh;
     overflow-y: auto;
-    box-shadow: 0 10px 40px #0005;
+    border-radius: 15px;
+    padding: 25px;
 }
 
-.panel h2 { margin-top: 0; }
+.panel h2 {
+    margin-top: 0;
+}
 
 .subtitle {
-    color: #607b84;
-    font-size: 14px;
-}
-
-.primary {
-    background: #277c81;
-    color: white;
-    border: 0;
-    border-radius: 8px;
-    padding: 12px 20px;
-    font-weight: bold;
-}
-
-.primary:hover { background: #1d6469; }
-
-.secondary {
-    background: #e3eeee;
-    border: 0;
-    padding: 10px 16px;
-    border-radius: 8px;
+    color: #738782;
+    font-size: 13px;
+    line-height: 1.6;
 }
 
 .game-area {
-    background: #e5f0ed;
+    background: #e8f1ec;
     border-radius: 12px;
-    padding: 20px;
+    padding: 18px;
     margin: 18px 0;
     text-align: center;
 }
 
-.game-area button {
-    margin: 5px;
-}
-
-/* HOUSE GAME */
-
-#houses {
-    display: flex;
-    justify-content: center;
-    gap: 12px;
-    flex-wrap: wrap;
-    margin: 20px 0;
-}
-
-.house {
-    font-size: 40px;
-    border: 2px solid #b4c9c9;
-    border-radius: 10px;
-    background: white;
-    padding: 12px;
+.primary {
+    background: #347f78;
+    color: white;
+    border: 0;
+    border-radius: 8px;
+    padding: 12px 19px;
     cursor: pointer;
 }
 
-.house.selected {
-    background: #c3e8d3;
-    border-color: #27875c;
-}
-
-#plane {
-    display: block;
-    font-size: 48px;
-    margin: 20px auto;
-    padding: 15px;
-    background: white;
-    border: 2px dashed #8caeb0;
-    border-radius: 12px;
-    width: 180px;
-}
-
-#plane.ready {
-    background: #c5ead4;
-}
-
-/* CLIMATE GAME */
-
-#iceArea {
-    display: flex;
-    justify-content: center;
-    gap: 12px;
-    flex-wrap: wrap;
-    margin: 15px;
-}
-
-.ice {
-    padding: 14px;
-    font-size: 30px;
-    background: white;
-    border: 2px solid #9bc9dd;
-    border-radius: 10px;
-}
-
-#ocean {
-    background: #74b9dc;
-    color: #164b70;
-    padding: 35px;
-    border-radius: 50%;
-    max-width: 250px;
-    margin: 20px auto;
-    border: 5px solid #b8e1ef;
-    font-weight: bold;
-    min-height: 100px;
-}
-
-/* PIPE GAME */
-
-#pipes {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-    max-width: 380px;
-    margin: 20px auto;
-}
-
-.pipe {
-    padding: 16px 8px;
-    border: 2px solid #9cb6bd;
-    border-radius: 9px;
-    background: white;
-    font-weight: bold;
-}
-
-.pipe.selected {
-    border-color: #278c81;
-    background: #c9e9df;
-}
-
-.pipe.done {
-    background: #a7ddc0;
-    border-color: #368a5a;
+.secondary {
+    background: #e3ece7;
+    color: #455d56;
+    border: 0;
+    border-radius: 8px;
+    padding: 10px 15px;
+    cursor: pointer;
 }
 
 .explanation {
-    background: #e5f0ed;
-    border-left: 5px solid #279c91;
+    background: #e8f1eb;
+    border-left: 4px solid #459c82;
+    border-radius: 6px;
     padding: 17px;
-    border-radius: 7px;
     line-height: 1.65;
     margin: 18px 0;
 }
 
-.explanation h3 { margin-top: 0; }
+/* airport game */
 
-@media(max-width: 600px) {
-    #town { height: 470px; }
-    .building { transform: scale(.8); }
-    .panel { padding: 18px; }
-    header h1 { font-size: 19px; }
+.house-grid, .ice-grid {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 18px 0;
+}
+
+.house-option, .ice {
+    border: 2px solid #b9d0c6;
+    background: white;
+    padding: 13px;
+    border-radius: 9px;
+    cursor: pointer;
+}
+
+.house-option.selected {
+    background: #c6e9d2;
+    border-color: #438e65;
+}
+
+.plane-button {
+    display: block;
+    width: 100%;
+    background: #d5e8f0;
+    border: 2px dashed #8eafb9;
+    padding: 20px;
+    border-radius: 12px;
+    font-size: 35px;
+    cursor: pointer;
+}
+
+
+/* animated house-building game */
+.house-option {
+    min-width: 112px;
+    min-height: 132px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    transition: background .2s, border-color .2s, transform .2s;
+}
+.house-option svg {
+    width: 76px;
+    height: 76px;
+    overflow: visible;
+}
+.house-option.selected {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 0 #8fc3a2;
+}
+.house-option.selected .house-build {
+    transform-origin: 50% 100%;
+    animation: houseBuild .55s cubic-bezier(.2,.8,.2,1) both;
+}
+.house-option.sent {
+    animation: houseDepart .55s ease-in forwards;
+    pointer-events: none;
+}
+@keyframes houseBuild {
+    from { transform: scaleY(.05); opacity: .35; }
+    to { transform: scaleY(1); opacity: 1; }
+}
+@keyframes houseDepart {
+    to { transform: translate(35px,-65px) scale(.45); opacity: 0; }
+}
+.plane-button {
+    position: relative;
+    overflow: hidden;
+    min-height: 86px;
+}
+.plane-art {
+    display: inline-block;
+    font-size: 0;
+    vertical-align: middle;
+}
+.plane-art svg {
+    width: 112px;
+    height: 48px;
+}
+.plane-button.launching .plane-art {
+    animation: planeLaunch 1.05s cubic-bezier(.35,.05,.7,.35) forwards;
+}
+@keyframes planeLaunch {
+    0% { transform: translateX(0) translateY(0) rotate(0); }
+    35% { transform: translateX(65px) translateY(-8px) rotate(-4deg); }
+    100% { transform: translateX(520px) translateY(-125px) rotate(-9deg); opacity: 0; }
+}
+
+/* illustrated pipe-matching game */
+.pipe-grid {
+    max-width: 490px;
+    gap: 12px;
+}
+.pipe-button {
+    min-height: 112px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    font-weight: 700;
+    color: #47616a;
+    position: relative;
+    overflow: hidden;
+    transition: border-color .2s, background .2s, transform .2s;
+}
+.pipe-button svg {
+    width: 100%;
+    max-width: 150px;
+    height: 52px;
+    overflow: visible;
+}
+.pipe-button .pipe-metal {
+    fill: none;
+    stroke: #718891;
+    stroke-width: 13;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+.pipe-button .pipe-highlight {
+    fill: none;
+    stroke: #b8cbd0;
+    stroke-width: 4;
+    stroke-linecap: round;
+}
+.pipe-button .pipe-water {
+    fill: none;
+    stroke: #55c9ee;
+    stroke-width: 5;
+    stroke-linecap: round;
+    stroke-dasharray: 8 10;
+    opacity: 0;
+}
+.pipe-button.selected {
+    background: #e1f3f6;
+    border-color: #399bb5;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 0 #b4dce4;
+}
+.pipe-button.done {
+    background: #d8f1df;
+    border-color: #65ad7b;
+}
+.pipe-button.done .pipe-water {
+    opacity: 1;
+    animation: pipeWaterFlow .7s linear infinite;
+}
+@keyframes pipeWaterFlow {
+    to { stroke-dashoffset: -36; }
+}
+.pipe-button.done::after {
+    content: "water flowing";
+    color: #32845a;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+/* climate game */
+
+.ice {
+    font-size: 27px;
+}
+
+.ocean {
+    background: #6bbce0;
+    border: 6px solid #b6e4ef;
+    border-radius: 50%;
+    padding: 25px;
+    max-width: 220px;
+    margin: 15px auto;
+    color: #164b6b;
+    font-weight: bold;
+}
+
+/* pipes game */
+
+.pipe-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    max-width: 360px;
+    margin: 20px auto;
+}
+
+.pipe-button {
+    background: white;
+    border: 2px solid #b9ccca;
+    padding: 16px 8px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.pipe-button.selected {
+    background: #c8e9dc;
+    border-color: #388b75;
+}
+
+.pipe-button.done {
+    background: #b6e5c4;
+}
+
+@media(max-width:600px) {
+    main { padding: 10px; }
+    .panel { padding: 17px; }
 }
 </style>
 </head>
@@ -451,134 +542,366 @@ main {
 
 <header>
     <div>
-        <h1>WATER SCARCITY: FIND THE CAUSES</h1>
-        <p>A very serious investigation. Probably.</p>
+        <h1>water scarcity</h1>
+        <p>find the problems affecting waterford</p>
     </div>
-    <button id="reset" onclick="resetGame()">Restart game</button>
+    <button id="reset" onclick="resetGame()">restart</button>
 </header>
 
 <main>
-    <div class="status">
-        <strong>Discoveries: <span id="count">0</span> / 3</strong>
-        <div class="progress">
-            <div id="progressFill"></div>
+
+    <!-- water bar -->
+    <div class="supply">
+        <div class="supply-top">
+            <strong>town water supply</strong>
+            <strong id="waterPercent">0%</strong>
         </div>
-        <strong id="percentage">0%</strong>
+        <div class="supply-track">
+            <div id="waterFill"></div>
+        </div>
     </div>
 
     <p class="instructions">
-        Explore the town! Click on suspicious objects to investigate
-        their connection to water scarcity.
+        explore the town and click on things that might be causing water scarcity.
     </p>
 
-    <section id="town">
-        <div class="grass"></div>
+    <div id="world">
 
-        <div class="road horizontal"></div>
-        <div class="road vertical"></div>
+    <svg id="town" viewBox="0 0 1100 760"
+         xmlns="http://www.w3.org/2000/svg">
 
-        <!-- Buildings -->
-        <div class="building" style="left:8%;top:9%">
-            <span class="window left"></span>
-            <span class="window right"></span>
-            <span class="building-label">SCHOOL</span>
-        </div>
+    <defs>
+        <g id="house">
+            <rect x="-42" y="0" width="84" height="68"
+                  fill="#e6bd88" class="building"/>
+            <path d="M-50 0 L0 -42 L50 0Z"
+                  fill="#ae6951" stroke="#80523e" stroke-width="3"/>
+            <rect x="-28" y="16" width="20" height="23"
+                  fill="#a8dce3" stroke="#806b51" stroke-width="3"/>
+            <rect x="10" y="16" width="20" height="23"
+                  fill="#a8dce3" stroke="#806b51" stroke-width="3"/>
+            <rect x="-8" y="41" width="18" height="27"
+                  fill="#85644b"/>
+        </g>
 
-        <div class="building" style="left:70%;top:10%;background:#d6a5a0">
-            <span class="window left"></span>
-            <span class="window right"></span>
-            <span class="building-label">HOSPITAL</span>
-        </div>
+        <g id="tree">
+            <rect x="-6" y="25" width="12" height="42" fill="#805e42"/>
+            <circle cx="0" cy="0" r="27" fill="#43844e"/>
+            <circle cx="-18" cy="12" r="18" fill="#5d9c57"/>
+            <circle cx="18" cy="12" r="18" fill="#5b9952"/>
+            <circle cx="0" cy="-15" r="17" fill="#71aa5d"/>
+        </g>
 
-        <div class="building" style="left:8%;top:43%;background:#d6c28a">
-            <span class="window left"></span>
-            <span class="window right"></span>
-            <span class="building-label">SHOP</span>
-        </div>
+        <g id="person">
+            <circle cy="0" r="10" fill="#dba17d"/>
+            <path d="M-10 -3 Q-12 -16 0 -16 Q12 -16 10 -3"
+                  fill="#493a31"/>
+            <path d="M-10 13 Q0 8 10 13 L12 40 H-12Z"
+                  fill="var(--shirt)"/>
+            <path class="arms" d="M-9 16 L-16 34"
+                  stroke="#dba17d" stroke-width="6" stroke-linecap="round"/>
+            <path class="arms second" d="M9 16 L16 34"
+                  stroke="#dba17d" stroke-width="6" stroke-linecap="round"/>
+            <path class="legs" d="M-5 40 L-9 63"
+                  stroke="#394b5d" stroke-width="7" stroke-linecap="round"/>
+            <path class="legs second" d="M5 40 L9 63"
+                  stroke="#394b5d" stroke-width="7" stroke-linecap="round"/>
+        </g>
+    </defs>
 
-        <div class="building" style="left:72%;top:43%;background:#b3a0d3">
-            <span class="window left"></span>
-            <span class="window right"></span>
-            <span class="building-label">LIBRARY</span>
-        </div>
+    <!-- background -->
+    <rect width="1100" height="700" fill="#acd58f"/>
 
-        <!-- Trees -->
-        <div class="tree" style="left:28%;top:13%"></div>
-        <div class="tree" style="left:59%;top:14%"></div>
-        <div class="tree" style="left:31%;top:45%"></div>
-        <div class="tree" style="left:88%;top:30%"></div>
-        <div class="tree" style="left:56%;top:82%"></div>
+    <ellipse cx="150" cy="190" rx="140" ry="100" fill="#b9df9b"/>
+    <ellipse cx="950" cy="180" rx="150" ry="90" fill="#b8dc9b"/>
+    <ellipse cx="180" cy="590" rx="150" ry="80" fill="#a0ce8c"/>
+    <ellipse cx="900" cy="590" rx="150" ry="90" fill="#a0ce8c"/>
 
-        <!-- People -->
-        <span class="person" style="left:22%;top:32%">●</span>
-        <span class="person" style="left:38%;top:29%">●</span>
-        <span class="person" style="left:65%;top:34%">●</span>
-        <span class="person" style="left:19%;top:78%">●</span>
-        <span class="person" style="left:60%;top:75%">●</span>
-        <span class="person" style="left:84%;top:77%">●</span>
-        <span class="person" style="left:50%;top:52%">●</span>
-        <span class="person" style="left:34%;top:84%">●</span>
+    <!-- roads: buildings are kept away from these -->
+    <rect x="0" y="400" width="1100" height="105" fill="#d4cbb1"/>
+    <rect x="0" y="414" width="1100" height="78" fill="#818b8b"/>
 
-        <!-- Water -->
-        <div class="lake">WATER RESERVOIR</div>
+    <path d="M0 453 H1100"
+          stroke="#f4e7ba" stroke-width="4"
+          stroke-dasharray="30 22"/>
 
-        <!-- Ordinary objects -->
-        <button class="object" style="left:35%;top:17%" title="Water fountain">
-            F
-        </button>
 
-        <button class="object" style="left:50%;top:33%" title="Car">
-            C
-        </button>
+    <!-- access road leading from the main road to the airport -->
+    <path d="M930 490 V548" stroke="#d4cbb1" stroke-width="92" fill="none"/>
+    <path d="M930 490 V548" stroke="#818b8b" stroke-width="66" fill="none"/>
+    <path d="M930 500 V540" stroke="#f4e7ba" stroke-width="3" stroke-dasharray="12 10" fill="none"/>
 
-        <button class="object" style="left:5%;top:76%" title="Park">
-            P
-        </button>
+    <!-- upper buildings -->
+    <g transform="translate(125 130)">
+        <rect x="-75" y="-5" width="150" height="120"
+              fill="#e5c58f" class="building"/>
+        <path d="M-83 -5 L0 -58 L83 -5Z"
+              fill="#ad6951" stroke="#80523e" stroke-width="3"/>
+        <rect x="-52" y="22" width="35" height="40" fill="#a9dce1" stroke="#806b51" stroke-width="3"/>
+        <rect x="17" y="22" width="35" height="40" fill="#a9dce1" stroke="#806b51" stroke-width="3"/>
+        <rect x="-12" y="64" width="25" height="51" fill="#89654a"/>
+        <text x="0" y="135" text-anchor="middle" fill="#455f4d" font-size="13">school</text>
+    </g>
 
-        <button class="object" style="left:89%;top:53%" title="Bench">
-            B
-        </button>
+    <g transform="translate(930 130)">
+        <rect x="-72" y="-5" width="144" height="120"
+              fill="#e9b7a9" class="building"/>
+        <path d="M-80 -5 L0 -55 L80 -5Z"
+              fill="#a3665b" stroke="#80523e" stroke-width="3"/>
+        <rect x="-50" y="22" width="32" height="36" fill="#a9dce1" stroke="#806b51" stroke-width="3"/>
+        <rect x="18" y="22" width="32" height="36" fill="#a9dce1" stroke="#806b51" stroke-width="3"/>
+        <rect x="-12" y="64" width="24" height="51" fill="#89654a"/>
+        <path d="M0 -42 V-17 M-13 -29 H13"
+              stroke="#d65c52" stroke-width="7"/>
+        <text x="0" y="135" text-anchor="middle" fill="#455f4d" font-size="13">hospital</text>
+    </g>
 
-        <button class="object" style="left:55%;top:49%" title="Mailbox">
-            M
-        </button>
+    <g transform="translate(135 290)">
+        <rect x="-65" y="0" width="130" height="85"
+              fill="#dfc994" class="building"/>
+        <path d="M-72 0 H72 L60 -28 H-60Z"
+              fill="#c76c52" stroke="#855540" stroke-width="3"/>
+        <rect x="-42" y="20" width="32" height="34" fill="#a9dce1" stroke="#806b51" stroke-width="3"/>
+        <rect x="12" y="20" width="32" height="34" fill="#a9dce1" stroke="#806b51" stroke-width="3"/>
+        <rect x="-7" y="54" width="16" height="31" fill="#85644b"/>
+        <text x="0" y="105" text-anchor="middle" fill="#455f4d" font-size="13">shop</text>
+    </g>
 
-        <button class="object" style="left:78%;top:79%" title="Boat">
-            V
-        </button>
+    <g transform="translate(920 290)">
+        <rect x="-65" y="0" width="130" height="85"
+              fill="#d0b7db" class="building"/>
+        <path d="M-72 0 L0 -36 L72 0Z"
+              fill="#8c709e" stroke="#715c7d" stroke-width="3"/>
+        <rect x="-42" y="20" width="32" height="34" fill="#a9dce1" stroke="#806b51" stroke-width="3"/>
+        <rect x="12" y="20" width="32" height="34" fill="#a9dce1" stroke="#806b51" stroke-width="3"/>
+        <rect x="-7" y="54" width="16" height="31" fill="#85644b"/>
+        <text x="0" y="105" text-anchor="middle" fill="#455f4d" font-size="13">library</text>
+    </g>
 
-        <!-- Discoverable causes -->
-        <button class="object" id="overpopulation"
-            style="left:43%;top:5%"
-            onclick="startGame('population')"
-            title="Investigate the crowded town">
-            <span>HOUSE</span>
-        </button>
+    <!-- houses -->
+    <use href="#house" transform="translate(320 155)"/>
+    <use href="#house" transform="translate(450 265) scale(.85)"/>
+    <use href="#house" transform="translate(760 155)"/>
+    <use href="#house" transform="translate(790 265) scale(.85)"/>
 
-        <button class="object" id="climate"
-            style="left:87%;top:12%"
-            onclick="startGame('climate')"
-            title="Investigate the strange weather">
-            <span>SUN</span>
-        </button>
+    <!-- trees -->
+    <use href="#tree" transform="translate(45 210)"/>
+    <use href="#tree" transform="translate(230 190) scale(.85)"/>
+    <use href="#tree" transform="translate(400 200)"/>
+    <use href="#tree" transform="translate(675 205)"/>
+    <use href="#tree" transform="translate(1060 230)"/>
+    <use href="#tree" transform="translate(50 580)"/>
+    <use href="#tree" transform="translate(370 570)"/>
+    <use href="#tree" transform="translate(1060 580)"/>
 
-        <button class="object" id="infrastructure"
-            style="left:46%;top:75%"
-            onclick="startGame('pipes')"
-            title="Investigate the broken pipes">
-            <span>PIPE</span>
-        </button>
+    <!-- water tower -->
+    <g transform="translate(620 110)">
+        <rect x="-43" y="-20" width="86" height="55"
+              rx="14" fill="#67a9c5" stroke="#436e80" stroke-width="4"/>
+        <ellipse cx="0" cy="-20" rx="43" ry="10"
+                 fill="#9dd4e4" stroke="#436e80" stroke-width="3"/>
+        <path d="M-27 35 L-35 130 M27 35 L35 130 M0 35 V130"
+              stroke="#657d83" stroke-width="8"/>
+        <text x="0" y="13" text-anchor="middle"
+              font-size="12" fill="white">water</text>
+    </g>
 
-        <div class="sign">
-            WELCOME TO WATERFORD<br>
-            Population: 85,000
-        </div>
-    </section>
+    <!-- airport at the end of the access road -->
+    <g transform="translate(930 575)">
+        <rect x="-82" y="-28" width="164" height="56"
+              rx="7" fill="#e9d8b3" stroke="#8c795d" stroke-width="3"/>
+        <path d="M-82 -28 L0 -58 L82 -28"
+              fill="#bd9870" stroke="#8c795d" stroke-width="3"/>
+        <rect x="-65" y="-7" width="130" height="22"
+              fill="#9dced6" stroke="#8c795d" stroke-width="3"/>
+        <path d="M-42 -5 V13 M-14 -5 V13 M14 -5 V13 M42 -5 V13"
+              stroke="#e9f6f4" stroke-width="3"/>
+        <rect x="-11" y="5" width="22" height="23" fill="#876b4c"/>
+    </g>
+
+    <rect x="790" y="650" width="290" height="34"
+          rx="5" class="runway"/>
+    <path d="M802 667 H1068" class="runway-line"/>
+
+    <!-- plane parked on the runway -->
+    <g transform="translate(930 666)">
+        <path d="M-38 0 L-12 -5 L-4 -24 L5 -24 L11 -5
+                 L38 0 L38 7 L11 5 L5 19 L-3 19
+                 L-10 5 L-38 7Z"
+              fill="#f1f4ec" stroke="#647e8b" stroke-width="2"/>
+        <rect x="-15" y="-2" width="29" height="4" fill="#6ba8c5"/>
+    </g>
+
+    <!-- farm -->
+    <g transform="translate(360 600)">
+        <rect x="-48" y="-25" width="95" height="55"
+              fill="#b99b65" stroke="#886d48" stroke-width="3"/>
+        <path d="M-35 -20 V25 M-10 -20 V25 M15 -20 V25 M38 -20 V25"
+              stroke="#709c53" stroke-width="9"/>
+        <text x="0" y="48" text-anchor="middle"
+              font-size="12" fill="#455d4b">farm</text>
+    </g>
+
+    <!-- reservoir -->
+    <ellipse cx="610" cy="620" rx="120" ry="48"
+             fill="#55add1" stroke="#d5edf0" stroke-width="8"/>
+    <path d="M500 620 Q555 597 610 620 T720 620"
+          fill="none" stroke="#b6e7ef" stroke-width="4"/>
+    <text x="610" y="625" text-anchor="middle"
+          fill="white" font-size="14" font-weight="bold">
+        reservoir
+    </text>
+
+    <!-- underground pipes -->
+    <path d="M30 735 H1060" class="pipe"/>
+    <path d="M30 735 H1060" class="pipe-light"/>
+    <path d="M30 735 H1060" class="flow"/>
+
+    <path d="M360 735 V690 M700 735 V690" class="pipe"/>
+    <path d="M360 735 V690 M700 735 V690" class="pipe-light"/>
+
+    <g transform="translate(360 725)">
+        <circle r="13" fill="#d9ae51" stroke="#536c74" stroke-width="4"/>
+        <path d="M-9 0 H9 M0 -9 V9"
+              stroke="#765c36" stroke-width="3"/>
+    </g>
+
+    <g transform="translate(700 725)">
+        <circle r="13" fill="#d9ae51" stroke="#536c74" stroke-width="4"/>
+        <path d="M-9 0 H9 M0 -9 V9"
+              stroke="#765c36" stroke-width="3"/>
+    </g>
+
+    <!-- broken pipe -->
+    <g>
+        <path d="M210 735 V700 H270 V675" class="pipe"/>
+        <path d="M210 735 V700 H270 V675" class="pipe-light"/>
+        <path d="M248 690 L263 705 M263 690 L248 705"
+              stroke="#d65e4d" stroke-width="6"/>
+        <g class="drip" fill="#44bce9">
+            <path d="M255 708 Q244 724 255 730 Q266 724 255 708Z"/>
+        </g>
+    </g>
+
+    <!-- cars only on the road -->
+    <g transform="translate(0 418)">
+    <g class="car" style="--speed:17s">
+        <rect x="0" y="0" width="90" height="34"
+              rx="8" fill="#e6a64e" stroke="#87603c" stroke-width="3"/>
+        <path d="M17 0 L31 -18 H66 L79 0Z"
+              fill="#b9e1e7" stroke="#87603c" stroke-width="3"/>
+        <circle cx="19" cy="34" r="9" fill="#37494a"/>
+        <circle cx="72" cy="34" r="9" fill="#37494a"/>
+    </g>
+    </g>
+
+    <g transform="translate(0 450)">
+    <g class="car" style="--speed:20s;animation-delay:-10s">
+        <rect x="0" y="0" width="90" height="34"
+              rx="8" fill="#638cb9" stroke="#415e7a" stroke-width="3"/>
+        <path d="M17 0 L31 -18 H66 L79 0Z"
+              fill="#b9e1e7" stroke="#415e7a" stroke-width="3"/>
+        <circle cx="19" cy="34" r="9" fill="#37494a"/>
+        <circle cx="72" cy="34" r="9" fill="#37494a"/>
+    </g>
+    </g>
+
+    <!-- pedestrians -->
+    <g id="people">
+
+        <g class="person walk-right" style="--speed:19s">
+            <use href="#person" transform="translate(30 375)"
+                 style="--shirt:#e36c5d"/>
+        </g>
+
+        <g class="person walk-left" style="--speed:22s">
+            <use href="#person" transform="translate(900 375)"
+                 style="--shirt:#5687bb"/>
+        </g>
+
+        <g class="person walk-right population-extra"
+           style="--speed:24s;animation-delay:-8s">
+            <use href="#person" transform="translate(120 550) scale(.8)"
+                 style="--shirt:#d7a64e"/>
+        </g>
+
+        <g class="person walk-left population-extra"
+           style="--speed:20s;animation-delay:-4s">
+            <use href="#person" transform="translate(900 550) scale(.8)"
+                 style="--shirt:#9c72b6"/>
+        </g>
+
+        <g class="person walk-right population-extra"
+           style="--speed:21s;animation-delay:-12s">
+            <use href="#person" transform="translate(250 375) scale(.85)"
+                 style="--shirt:#4a9a76"/>
+        </g>
+
+        <g class="person walk-left population-extra"
+           style="--speed:25s;animation-delay:-15s">
+            <use href="#person" transform="translate(1000 375) scale(.85)"
+                 style="--shirt:#d7819f"/>
+        </g>
+
+        <g class="person walk-right population-extra"
+           style="--speed:18s;animation-delay:-5s">
+            <use href="#person" transform="translate(80 540) scale(.8)"
+                 style="--shirt:#a76b55"/>
+        </g>
+
+        <g class="person walk-left population-extra"
+           style="--speed:23s;animation-delay:-10s">
+            <use href="#person" transform="translate(750 375) scale(.9)"
+                 style="--shirt:#7b7bc0"/>
+        </g>
+
+    </g>
+
+    <!-- airport discovery: label is positioned beside the relocated terminal -->
+    <g class="hotspot" id="airportSpot"
+       onclick="startGame('population')">
+        <rect x="785" y="505" width="300" height="185"
+              rx="12" class="outline"/>
+        <rect x="880" y="610" width="100" height="24"
+              rx="6" fill="#fff6db" stroke="#b9a77c"/>
+        <text x="930" y="627" text-anchor="middle"
+              font-size="12" fill="#536452">airport</text>
+    </g>
+
+    <!-- climate discovery -->
+    <g class="hotspot" id="climateSpot"
+       onclick="startGame('climate')">
+
+        <circle cx="1030" cy="55" r="30"
+                fill="#f3c45d" stroke="#d99f3e" stroke-width="4"/>
+
+        <g stroke="#e5aa42" stroke-width="5">
+            <path d="M1030 12 V0 M1030 110 V98
+                     M987 55 H975 M1085 55 H1073
+                     M1000 25 L990 15 M1070 95 L1060 85
+                     M1000 85 L990 95 M1070 15 L1060 25"/>
+        </g>
+
+        <circle class="outline" cx="1030" cy="55" r="53"/>
+    </g>
+
+    <!-- infrastructure discovery -->
+    <g class="hotspot" id="pipesSpot"
+       onclick="startGame('pipes')">
+        <circle class="outline" cx="255" cy="705" r="48"/>
+        <rect x="188" y="655" width="135" height="24"
+              rx="5" fill="#fff6db" stroke="#b9a77c"/>
+        <text x="255" y="672" text-anchor="middle"
+              font-size="12" fill="#536452">leaking pipe</text>
+    </g>
+
+    </svg>
+    </div>
 
     <p class="subtitle">
-        Tip: Not everything in the town is important.
-        Some objects are just here to distract you.
+        look around carefully. not everything is what it seems.
     </p>
+
 </main>
 
 <div id="modal">
@@ -586,132 +909,134 @@ main {
 </div>
 
 <script>
+
+// game progress
+
 const found = {
     population: false,
     climate: false,
     pipes: false
 };
 
-const selectedHouses = new Set();
-const completedPipes = new Set();
-
-let iceDropped = 0;
-let pipeSelection = null;
+let houses = new Set();
+let iceCount = 0;
+let pipesDone = new Set();
+let pipeSelected = null;
+let planeLaunched = false;
 
 const explanations = {
-    population: {
-        title: "OVERPOPULATION",
-        subtitle: "Too many people, not enough water!",
-        body: `
-            <h3>What is overpopulation?</h3>
-            Overpopulation occurs when the number of people in an
-            area grows beyond what its available resources can
-            comfortably support.
 
-            <h3>How does it cause water scarcity?</h3>
-            Every person needs water for drinking, cooking, washing,
-            sanitation and other everyday activities.
+population: {
+    title: "population growth",
+    body: `
+        <h3>what is population growth?</h3>
+        Population growth occurs when the number of people living
+        in an area increases over time.
 
-            As populations increase, the total demand for freshwater
-            also increases. Cities may struggle to provide enough
-            water for everyone, especially when their water supplies
-            and infrastructure cannot expand quickly enough.
+        <h3>how does it cause water scarcity?</h3>
+        Every person needs freshwater for drinking, cooking,
+        cleaning, sanitation and other everyday activities.
 
-            <h3>Real-world consequences</h3>
-            <ul>
-                <li>Increased pressure on rivers, lakes and groundwater.</li>
-                <li>Greater competition between households, farms and industries.</li>
-                <li>Overuse of groundwater reserves.</li>
-                <li>Greater difficulty providing reliable water services.</li>
-            </ul>
+        As a population grows, the demand for freshwater increases.
+        Cities may struggle to provide enough water if their
+        reservoirs and water systems cannot keep up.
 
-            <h3>Possible solutions</h3>
-            Better urban planning, efficient water use, improved
-            infrastructure and sustainable management of freshwater
-            resources can help cities meet growing demand.
-        `
-    },
+        <h3>real-world consequences</h3>
+        <ul>
+            <li>greater demand for drinking water.</li>
+            <li>more pressure on rivers and groundwater.</li>
+            <li>competition between households, farms and industries.</li>
+            <li>overuse of existing freshwater supplies.</li>
+        </ul>
 
-    climate: {
-        title: "CLIMATE CHANGE",
-        subtitle: "The planet's thermostat is having problems.",
-        body: `
-            <h3>What is climate change?</h3>
-            Climate change refers to long-term changes in Earth's
-            temperatures and weather patterns. Modern global warming
-            is primarily caused by human activities that release
-            greenhouse gases.
+        <h3>possible solutions</h3>
+        Better urban planning, efficient water use, improved
+        infrastructure and sustainable management of water
+        resources can help growing cities.
+    `
+},
 
-            <h3>How does it cause water scarcity?</h3>
-            Rising temperatures increase evaporation from land and
-            water surfaces. Changes in rainfall patterns can also
-            cause some regions to experience longer or more severe
-            droughts.
+climate: {
+    title: "climate change",
+    body: `
+        <h3>what is climate change?</h3>
+        Climate change refers to long-term changes in Earth's
+        temperatures and weather patterns. Modern global warming
+        is mainly caused by human activities that release
+        greenhouse gases.
 
-            Glaciers and seasonal snowpacks are important freshwater
-            sources for many communities. Their decline can disrupt
-            the timing and amount of water available downstream.
+        <h3>how does it cause water scarcity?</h3>
+        Higher temperatures increase evaporation. Changing
+        rainfall patterns can also cause some regions to
+        experience longer or more severe droughts.
 
-            <h3>Real-world consequences</h3>
-            <ul>
-                <li>More frequent or severe droughts in some regions.</li>
-                <li>Unpredictable rainfall.</li>
-                <li>Reduced snow and glacier reserves over time.</li>
-                <li>Increased pressure on agricultural water supplies.</li>
-            </ul>
+        Glaciers and seasonal snowpacks provide important
+        freshwater supplies to many communities. Their decline
+        can affect the amount and timing of water available.
 
-            <h3>Possible solutions</h3>
-            Reducing greenhouse gas emissions, protecting water
-            catchments, improving water storage and developing
-            drought-resilient water systems can reduce risks.
-        `
-    },
+        <h3>real-world consequences</h3>
+        <ul>
+            <li>more severe droughts in some regions.</li>
+            <li>unpredictable rainfall.</li>
+            <li>declining glacier and snow reserves.</li>
+            <li>greater pressure on agricultural water supplies.</li>
+        </ul>
 
-    pipes: {
-        title: "LACK OF WATER INFRASTRUCTURE",
-        subtitle: "The plumbing is not doing particularly well.",
-        body: `
-            <h3>What is water infrastructure?</h3>
-            Water infrastructure includes the physical systems
-            used to collect, treat, store and distribute water.
+        <h3>possible solutions</h3>
+        Reducing greenhouse gas emissions, protecting catchments,
+        improving water storage and preparing for droughts
+        can reduce the risks.
+    `
+},
 
-            This includes reservoirs, treatment plants, pumps,
-            pipes and water distribution networks.
+pipes: {
+    title: "lack of water infrastructure",
+    body: `
+        <h3>what is water infrastructure?</h3>
+        Water infrastructure includes the systems used to
+        collect, treat, store and distribute water.
 
-            <h3>How does poor infrastructure cause water scarcity?</h3>
-            Old or damaged pipes can leak large amounts of treated
-            water before it reaches households.
+        This includes reservoirs, treatment plants, pumps
+        and water pipes.
 
-            Communities without adequate treatment facilities,
-            storage systems or distribution networks may struggle
-            to access reliable and safe water, even when water
-            sources exist nearby.
+        <h3>how does poor infrastructure cause water scarcity?</h3>
+        Old or damaged pipes can leak treated water before it
+        reaches households.
 
-            <h3>Real-world consequences</h3>
-            <ul>
-                <li>Water lost through leaking distribution pipes.</li>
-                <li>Unreliable access to drinking water.</li>
-                <li>Contamination risks from damaged systems.</li>
-                <li>Some communities receiving much less water than others.</li>
-            </ul>
+        Communities without adequate treatment facilities,
+        storage systems or distribution networks may struggle
+        to access safe and reliable water, even when water
+        sources exist nearby.
 
-            <h3>Possible solutions</h3>
-            Maintaining and replacing ageing pipes, building
-            appropriate treatment facilities, improving water
-            storage and investing in distribution networks can
-            make water supplies more reliable.
-        `
-    }
+        <h3>real-world consequences</h3>
+        <ul>
+            <li>water lost through leaking pipes.</li>
+            <li>unreliable access to drinking water.</li>
+            <li>contamination risks from damaged systems.</li>
+            <li>unequal access to water between communities.</li>
+        </ul>
+
+        <h3>possible solutions</h3>
+        Replacing ageing pipes, maintaining water systems,
+        building treatment facilities and improving storage
+        can make water supplies more reliable.
+    `
+}
+
 };
 
-function openModal(content) {
-    document.getElementById("panel").innerHTML = content;
+// modal
+
+function openModal(html) {
+    document.getElementById("panel").innerHTML = html;
     document.getElementById("modal").classList.add("show");
 }
 
 function closeModal() {
     document.getElementById("modal").classList.remove("show");
 }
+
+// start games
 
 function startGame(type) {
     if (found[type]) return;
@@ -721,106 +1046,130 @@ function startGame(type) {
     if (type === "pipes") pipeGame();
 }
 
-// ============================
-// GAME 1: OVERPOPULATION
-// ============================
+// population game
 
 function populationGame() {
-    selectedHouses.clear();
+    houses.clear();
+    planeLaunched = false;
 
     openModal(`
-        <h2>Urban Expansion Simulator</h2>
+        <h2>airport expansion</h2>
         <p class="subtitle">
-            Congratulations! You've been promoted to city planner.
-            Your salary is one imaginary dollar.
+            the town is overcrowded. build new houses in a distant
+            town and send them there by aircraft.
         </p>
 
         <div class="game-area">
-            <h3>Build three houses</h3>
-            <p>Click three houses to select them.</p>
+            <h3>build three houses</h3>
 
-            <div id="houses">
-                ${[1,2,3,4,5].map(n =>
-                    `<button class="house" onclick="selectHouse(${n},this)">
-                        HOUSE ${n}
-                    </button>`
-                ).join("")}
+            <div class="house-grid">
+                ${[1,2,3,4,5].map(n => `
+                    <button class="house-option"
+                        onclick="selectHouse(${n},this)">
+                        <svg viewBox="0 0 90 82" aria-hidden="true">
+                            <g class="house-build">
+                                <path d="M8 35 L45 6 L82 35" fill="#ad6951" stroke="#80523e" stroke-width="3" stroke-linejoin="round"/>
+                                <rect x="15" y="34" width="60" height="43" rx="2" fill="#e6bd88" stroke="#806b51" stroke-width="3"/>
+                                <rect x="24" y="43" width="14" height="15" fill="#a8dce3" stroke="#806b51" stroke-width="2"/>
+                                <rect x="52" y="43" width="14" height="15" fill="#a8dce3" stroke="#806b51" stroke-width="2"/>
+                                <rect x="39" y="56" width="13" height="21" fill="#85644b"/>
+                            </g>
+                        </svg>
+                        <span>house ${n}</span>
+                    </button>
+                `).join("")}
             </div>
 
-            <p id="houseCount">Houses built: 0 / 3</p>
+            <p id="houseStatus">houses built: 0 / 3</p>
 
-            <button id="plane" onclick="sendPlane()">
-                AIRCRAFT
+            <button class="plane-button" id="planeButton" onclick="sendPlane()">
+                <span class="plane-art">
+                    <svg viewBox="0 0 140 60" aria-hidden="true">
+                        <path d="M8 30 L55 23 L70 4 L80 4 L83 23 L129 29 L129 36 L83 34 L78 53 L69 53 L62 34 L8 37Z"
+                              fill="#f7fbf5" stroke="#647e8b" stroke-width="2.5" stroke-linejoin="round"/>
+                        <path d="M90 27 L112 29 L90 31Z" fill="#8fc8dc"/>
+                        <circle cx="47" cy="30" r="3" fill="#6ba8c5"/>
+                    </svg>
+                </span>
+                <span>send aircraft</span>
             </button>
 
-            <p id="planeMessage">Send your houses to the distant town!</p>
+            <p id="planeMessage">
+                send the houses to their new town.
+            </p>
         </div>
 
-        <button class="secondary" onclick="closeModal()">Give up</button>
+        <button class="secondary" onclick="closeModal()">close</button>
     `);
 }
 
 function selectHouse(n, button) {
-    if (selectedHouses.has(n)) {
-        selectedHouses.delete(n);
+    if (houses.has(n)) {
+        houses.delete(n);
         button.classList.remove("selected");
-    } else if (selectedHouses.size < 3) {
-        selectedHouses.add(n);
+    } else if (houses.size < 3) {
+        houses.add(n);
         button.classList.add("selected");
     }
 
-    document.getElementById("houseCount").textContent =
-        "Houses built: " + selectedHouses.size + " / 3";
-
-    document.getElementById("plane").classList.toggle(
-        "ready", selectedHouses.size === 3
-    );
+    document.getElementById("houseStatus").textContent =
+        "houses built: " + houses.size + " / 3";
 }
 
 function sendPlane() {
-    if (selectedHouses.size !== 3) {
+    if (houses.size !== 3) {
         document.getElementById("planeMessage").textContent =
-            "You need exactly three houses first!";
+            "build three houses first!";
         return;
     }
+    if (planeLaunched) return;
 
-    completeGame("population");
+    planeLaunched = true;
+    document.querySelectorAll(".house-option.selected").forEach((house, index) => {
+        house.style.animationDelay = (index * 120) + "ms";
+        house.classList.add("sent");
+    });
+
+    const planeButton = document.getElementById("planeButton");
+    planeButton.classList.add("launching");
+    document.getElementById("planeMessage").textContent =
+        "houses loaded. aircraft departing...";
+
+    setTimeout(() => completeGame("population"), 1150);
 }
 
-// ============================
-// GAME 2: CLIMATE CHANGE
-// ============================
+// climate game
 
 function climateGame() {
-    iceDropped = 0;
+    iceCount = 0;
 
     openModal(`
-        <h2>Emergency Ice Delivery</h2>
+        <h2>emergency ice delivery</h2>
         <p class="subtitle">
-            The planet is getting warmer. We have a highly
-            questionable solution.
+            so yknow how climate change causes water scarcity
+            basically what you have to do is drop ice cubes into the ocean.
         </p>
 
         <div class="game-area">
-            <h3>Drop five ice cubes into the ocean!</h3>
+            <h3>drop five ice cubes into the ocean</h3>
 
-            <div id="iceArea">
-                ${[1,2,3,4,5].map(n =>
-                    `<button class="ice" onclick="dropIce(this)">
-                        ICE
-                    </button>`
-                ).join("")}
+            <div class="ice-grid">
+                ${[1,2,3,4,5].map(n => `
+                    <button class="ice" onclick="dropIce(this)">
+                        ice
+                    </button>
+                `).join("")}
             </div>
 
-            <div id="ocean">
-                OCEAN
-                <p id="iceCount">Ice delivered: 0 / 5</p>
+            <div class="ocean">
+                ocean
+                <p id="iceStatus">ice delivered: 0 / 5</p>
             </div>
 
-            <p id="iceMessage">Click the ice cubes to deliver them.</p>
+            <p id="iceMessage">click the ice cubes.</p>
         </div>
 
-        <button class="secondary" onclick="closeModal()">Give up</button>
+        <button class="secondary" onclick="closeModal()">close</button>
     `);
 }
 
@@ -828,160 +1177,212 @@ function dropIce(button) {
     if (button.disabled) return;
 
     button.disabled = true;
-    button.style.opacity = ".3";
-    button.style.textDecoration = "line-through";
+    button.style.opacity = ".25";
 
-    iceDropped++;
+    iceCount++;
 
-    document.getElementById("iceCount").textContent =
-        "Ice delivered: " + iceDropped + " / 5";
+    document.getElementById("iceStatus").textContent =
+        "ice delivered: " + iceCount + " / 5";
 
-    if (iceDropped === 5) {
+    if (iceCount === 5) {
         document.getElementById("iceMessage").textContent =
-            "Congratulations! You have cooled approximately 0.0000001% of the ocean.";
-        setTimeout(() => completeGame("climate"), 700);
+            "you have cooled approximately 0.0000001% of the ocean.";
+
+        setTimeout(() => completeGame("climate"), 800);
     }
 }
 
-// ============================
-// GAME 3: INFRASTRUCTURE
-// ============================
-
-const pipePairs = [
-    ["SOURCE A", "HOME A"],
-    ["SOURCE B", "HOME B"],
-    ["SOURCE C", "HOME C"]
-];
+// pipe game
 
 function pipeGame() {
-    completedPipes.clear();
-    pipeSelection = null;
+    pipesDone.clear();
+    pipeSelected = null;
 
     openModal(`
-        <h2>Emergency Plumbing Department</h2>
+        <h2>emergency plumbing</h2>
         <p class="subtitle">
-            Three houses have lost their water supply.
-            Connect the pipes to restore service.
+            three houses have lost their water supply.
+            connect the matching pipes to restore water.
         </p>
 
         <div class="game-area">
-            <h3>Connect matching endpoints</h3>
+            <h3>connect matching pipes</h3>
 
-            <p>Select one source, then its matching destination.</p>
+            <p>select a source, then its matching destination.</p>
 
-            <div id="pipes">
-                <button class="pipe" onclick="selectPipe('SOURCE A',this)">SOURCE A</button>
-                <button class="pipe" onclick="selectPipe('HOME C',this)">HOME C</button>
+            <div class="pipe-grid">
+                <button class="pipe-button"
+                    onclick="selectPipe('source a',this)">
+                    <svg viewBox="0 0 140 55" aria-hidden="true">
+                        <path class="pipe-metal" d="M8 28 H54 Q67 28 67 15 V8"/>
+                        <path class="pipe-highlight" d="M8 23 H52 Q62 23 62 14 V8"/>
+                        <path d="M8 15 V41 M1 15 H15 M1 41 H15" stroke="#526b75" stroke-width="4" stroke-linecap="round"/>
+                        <circle cx="67" cy="8" r="7" fill="#d7ad58" stroke="#806a43" stroke-width="2"/>
+                    </svg>
+                    <span>source a</span>
+                </button>
 
-                <button class="pipe" onclick="selectPipe('SOURCE B',this)">SOURCE B</button>
-                <button class="pipe" onclick="selectPipe('HOME A',this)">HOME A</button>
+                <button class="pipe-button"
+                    onclick="selectPipe('home c',this)">
+                    <svg viewBox="0 0 140 55" aria-hidden="true">
+                        <path class="pipe-metal" d="M8 8 V28 Q8 40 22 40 H128"/>
+                        <path class="pipe-highlight" d="M13 8 V26 Q13 35 23 35 H128"/>
+                        <path d="M115 31 L128 40 L115 49" fill="none" stroke="#526b75" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                        <rect x="2" y="2" width="12" height="12" rx="3" fill="#d7ad58" stroke="#806a43" stroke-width="2"/>
+                    </svg>
+                    <span>home c</span>
+                </button>
 
-                <button class="pipe" onclick="selectPipe('SOURCE C',this)">SOURCE C</button>
-                <button class="pipe" onclick="selectPipe('HOME B',this)">HOME B</button>
+                <button class="pipe-button"
+                    onclick="selectPipe('source b',this)">
+                    <svg viewBox="0 0 140 55" aria-hidden="true">
+                        <path class="pipe-metal" d="M8 28 H128"/>
+                        <path class="pipe-highlight" d="M8 23 H128"/>
+                        <path d="M8 15 V41 M1 15 H15 M1 41 H15" stroke="#526b75" stroke-width="4" stroke-linecap="round"/>
+                        <circle cx="70" cy="28" r="9" fill="#d7ad58" stroke="#806a43" stroke-width="2"/>
+                        <path d="M70 19 V37 M61 28 H79" stroke="#806a43" stroke-width="2"/>
+                    </svg>
+                    <span>source b</span>
+                </button>
+
+                <button class="pipe-button"
+                    onclick="selectPipe('home a',this)">
+                    <svg viewBox="0 0 140 55" aria-hidden="true">
+                        <path class="pipe-metal" d="M8 40 H118 Q130 40 130 28 V8"/>
+                        <path class="pipe-highlight" d="M8 35 H116 Q125 35 125 27 V8"/>
+                        <path d="M118 8 H140 M118 1 H140" stroke="#526b75" stroke-width="4" stroke-linecap="round"/>
+                        <rect x="122" y="2" width="16" height="12" rx="3" fill="#d7ad58" stroke="#806a43" stroke-width="2"/>
+                    </svg>
+                    <span>home a</span>
+                </button>
+
+                <button class="pipe-button"
+                    onclick="selectPipe('source c',this)">
+                    <svg viewBox="0 0 140 55" aria-hidden="true">
+                        <path class="pipe-metal" d="M8 8 V28 Q8 40 20 40 H128"/>
+                        <path class="pipe-highlight" d="M13 8 V26 Q13 35 21 35 H128"/>
+                        <path d="M8 2 V14 M1 2 H15" stroke="#526b75" stroke-width="4" stroke-linecap="round"/>
+                        <circle cx="65" cy="40" r="8" fill="#d7ad58" stroke="#806a43" stroke-width="2"/>
+                    </svg>
+                    <span>source c</span>
+                </button>
+
+                <button class="pipe-button"
+                    onclick="selectPipe('home b',this)">
+                    <svg viewBox="0 0 140 55" aria-hidden="true">
+                        <path class="pipe-metal" d="M8 8 V28 Q8 40 20 40 H128"/>
+                        <path class="pipe-highlight" d="M13 8 V26 Q13 35 21 35 H128"/>
+                        <path class="pipe-water" d="M8 8 V28 Q8 40 20 40 H128"/>
+                        <path d="M118 31 L130 40 L118 49" fill="none" stroke="#526b75" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <span>home b</span>
+                </button>
             </div>
 
-            <p id="pipeCount">Pipes repaired: 0 / 3</p>
-            <p id="pipeMessage">No leaks repaired yet.</p>
+            <p id="pipeStatus">pipes repaired: 0 / 3</p>
+            <p id="pipeMessage">no connections yet.</p>
         </div>
 
-        <button class="secondary" onclick="closeModal()">Give up</button>
+        <button class="secondary" onclick="closeModal()">close</button>
     `);
 }
 
 function selectPipe(name, button) {
     if (button.classList.contains("done")) return;
 
-    if (!pipeSelection) {
-        if (!name.startsWith("SOURCE")) {
+    if (!pipeSelected) {
+        if (!name.startsWith("source")) {
             document.getElementById("pipeMessage").textContent =
-                "Start by selecting a water source!";
+                "select a water source first!";
             return;
         }
 
-        pipeSelection = name;
+        pipeSelected = name;
         button.classList.add("selected");
 
         document.getElementById("pipeMessage").textContent =
-            "Now select the matching destination.";
+            "now select the matching home.";
+
         return;
     }
 
-    if (name.startsWith("SOURCE")) {
-        document.querySelectorAll(".pipe").forEach(b =>
+    if (name.startsWith("source")) {
+        document.querySelectorAll(".pipe-button").forEach(b =>
             b.classList.remove("selected")
         );
 
-        pipeSelection = name;
+        pipeSelected = name;
         button.classList.add("selected");
         return;
     }
 
-    const sourceLetter = pipeSelection.slice(-1);
-    const destinationLetter = name.slice(-1);
+    const source = pipeSelected.slice(-1);
+    const destination = name.slice(-1);
 
-    if (sourceLetter === destinationLetter) {
-        completedPipes.add(sourceLetter);
+    if (source === destination) {
+        pipesDone.add(source);
 
-        document.querySelectorAll(".pipe").forEach(b => {
-            if (
-                b.textContent.endsWith(sourceLetter) &&
-                !b.classList.contains("done")
-            ) {
+        document.querySelectorAll(".pipe-button").forEach(b => {
+            if (b.textContent.trim().endsWith(source)) {
                 b.classList.remove("selected");
                 b.classList.add("done");
             }
         });
 
         document.getElementById("pipeMessage").textContent =
-            "Connection successful! Water restored.";
-
+            "connection successful! water restored.";
     } else {
         document.getElementById("pipeMessage").textContent =
-            "Incorrect connection! Check the source and try again.";
+            "incorrect connection. try again.";
 
-        document.querySelectorAll(".pipe").forEach(b =>
+        document.querySelectorAll(".pipe-button").forEach(b =>
             b.classList.remove("selected")
         );
     }
 
-    pipeSelection = null;
+    pipeSelected = null;
 
-    document.getElementById("pipeCount").textContent =
-        "Pipes repaired: " + completedPipes.size + " / 3";
+    document.getElementById("pipeStatus").textContent =
+        "pipes repaired: " + pipesDone.size + " / 3";
 
-    if (completedPipes.size === 3) {
-        setTimeout(() => completeGame("pipes"), 600);
+    if (pipesDone.size === 3) {
+        setTimeout(() => completeGame("pipes"), 700);
     }
 }
 
-// ============================
-// COMPLETION AND EXPLANATIONS
-// ============================
+// complete a mission
 
 function completeGame(type) {
     if (found[type]) return;
 
     found[type] = true;
 
+    // mark discovery
     const target = document.getElementById(
-        type === "population" ? "overpopulation" :
-        type === "climate" ? "climate" :
-        "infrastructure"
+        type === "population" ? "airportSpot" :
+        type === "climate" ? "climateSpot" :
+        "pipesSpot"
     );
 
     target.classList.add("found");
-    target.disabled = true;
 
+    // reduce population after airport mission
+    if (type === "population") {
+        document.querySelectorAll(".population-extra").forEach(person => {
+            person.style.display = "none";
+        });
+    }
+
+    // increase town water supply
     updateProgress();
 
     const info = explanations[type];
 
     openModal(`
         <div style="text-align:center">
-            <h2>DISCOVERY UNLOCKED!</h2>
-            <p style="font-size:38px">CASE SOLVED</p>
-            <h2>${info.title}</h2>
-            <p class="subtitle">${info.subtitle}</p>
+            <h2>problem solved!</h2>
+            <h1 style="font-size:38px">+33% water</h1>
+            <p class="subtitle">${info.title}</p>
         </div>
 
         <div class="explanation">
@@ -989,7 +1390,7 @@ function completeGame(type) {
         </div>
 
         <button class="primary" onclick="afterExplanation()">
-            Continue investigation
+            continue exploring
         </button>
     `);
 }
@@ -1002,59 +1403,64 @@ function afterExplanation() {
     }
 }
 
+// water progress
+
 function updateProgress() {
     const total = Object.values(found).filter(Boolean).length;
     const percentage = Math.round(total / 3 * 100);
 
-    document.getElementById("count").textContent = total;
-    document.getElementById("percentage").textContent =
+    document.getElementById("waterFill").style.width =
         percentage + "%";
 
-    document.getElementById("progressFill").style.width =
+    document.getElementById("waterPercent").textContent =
         percentage + "%";
 }
+
+// victory
 
 function showVictory() {
     openModal(`
         <div style="text-align:center">
-            <h1>INVESTIGATION COMPLETE</h1>
-            <p style="font-size:55px">CASE CLOSED</p>
-            <h2>You've discovered all three causes!</h2>
+            <h1>town restored!</h1>
+            <p style="font-size:50px">100%</p>
+            <h2>all problems solved</h2>
         </div>
 
         <div class="explanation">
-            <h3>What have we learned?</h3>
-            Water scarcity is a complex problem influenced by
-            several interconnected factors.
+            <h3>what have we learned?</h3>
+
+            Water scarcity is influenced by many interconnected
+            factors.
 
             Population growth increases demand, climate change
-            affects freshwater availability, and inadequate
+            affects freshwater availability, and poor
             infrastructure prevents water from reaching people.
 
-            Understanding these causes is an important step
-            towards finding sustainable solutions.
+            Understanding these problems helps communities
+            develop sustainable solutions.
         </div>
 
-        <p style="text-align:center">
-            Congratulations, Water Investigator.
-        </p>
-
         <button class="primary" onclick="resetGame()">
-            Play again
+            play again
         </button>
     `);
 }
 
+// reset
+
 function resetGame() {
     Object.keys(found).forEach(key => found[key] = false);
 
-    document.querySelectorAll(".object").forEach(button => {
-        button.classList.remove("found");
-        button.disabled = false;
+    document.querySelectorAll(".hotspot").forEach(el =>
+        el.classList.remove("found")
+    );
+
+    document.querySelectorAll(".population-extra").forEach(person => {
+        person.style.display = "";
     });
 
-    selectedHouses.clear();
-    completedPipes.clear();
+    houses.clear();
+    pipesDone.clear();
 
     updateProgress();
     closeModal();
