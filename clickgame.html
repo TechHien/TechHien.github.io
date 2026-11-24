@@ -1,0 +1,1065 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Water Scarcity: Find the Causes</title>
+
+<style>
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #dceef0;
+    color: #263c49;
+}
+
+header {
+    background: #234f62;
+    color: white;
+    padding: 18px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 23px;
+}
+
+header p {
+    margin: 5px 0 0;
+    color: #c7e4ec;
+    font-size: 13px;
+}
+
+button {
+    cursor: pointer;
+    font: inherit;
+}
+
+#reset {
+    border: 1px solid #ffffff66;
+    background: transparent;
+    color: white;
+    padding: 9px 15px;
+    border-radius: 8px;
+}
+
+main {
+    max-width: 1100px;
+    margin: auto;
+    padding: 20px;
+}
+
+.status {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+}
+
+.progress {
+    background: #c5dadd;
+    width: 190px;
+    height: 10px;
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+#progressFill {
+    background: #279c91;
+    width: 0%;
+    height: 100%;
+    transition: width .3s;
+}
+
+.instructions {
+    margin-bottom: 15px;
+    color: #496572;
+}
+
+/* THE TOWN */
+
+#town {
+    position: relative;
+    height: 550px;
+    overflow: hidden;
+    border: 5px solid white;
+    border-radius: 15px;
+    background: #a9d8b0;
+    box-shadow: 0 5px 20px #264c5930;
+}
+
+.grass {
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(ellipse at 15% 25%, #8fcf91 0 13%, transparent 14%),
+        radial-gradient(ellipse at 80% 70%, #91c995 0 17%, transparent 18%),
+        #b3dba5;
+}
+
+.road {
+    position: absolute;
+    background: #777f82;
+    border: 3px solid #626d70;
+}
+
+.road.horizontal {
+    top: 65%;
+    height: 95px;
+    width: 100%;
+}
+
+.road.vertical {
+    left: 44%;
+    width: 100px;
+    height: 100%;
+}
+
+.road::after {
+    content: "";
+    position: absolute;
+    background: repeating-linear-gradient(
+        90deg, transparent 0 30px,
+        #eee 30px 55px,
+        transparent 55px 85px
+    );
+    height: 4px;
+    top: 45px;
+    left: 0;
+    right: 0;
+}
+
+.road.vertical::after {
+    background: repeating-linear-gradient(
+        180deg, transparent 0 30px,
+        #eee 30px 55px,
+        transparent 55px 85px
+    );
+    height: auto;
+    width: 4px;
+    top: 0;
+    bottom: 0;
+    left: 45px;
+}
+
+.building {
+    position: absolute;
+    width: 100px;
+    height: 90px;
+    background: #e6b879;
+    border: 4px solid #8c684b;
+    border-radius: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 12px;
+    font-weight: bold;
+    text-align: center;
+    box-shadow: 4px 5px #0002;
+}
+
+.building::before {
+    content: "";
+    position: absolute;
+    top: -20px;
+    left: -5px;
+    width: 102px;
+    height: 24px;
+    background: #ad6651;
+    clip-path: polygon(50% 0, 100% 100%, 0 100%);
+}
+
+.window {
+    position: absolute;
+    background: #91d4df;
+    border: 2px solid #80664b;
+    width: 20px;
+    height: 25px;
+    top: 23px;
+}
+
+.window.left { left: 13px; }
+.window.right { right: 13px; }
+
+.building-label {
+    position: absolute;
+    bottom: 5px;
+}
+
+.tree {
+    position: absolute;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #347d52;
+    box-shadow: 0 12px 0 -5px #795b3b;
+}
+
+.object {
+    position: absolute;
+    z-index: 4;
+    cursor: pointer;
+    border: 0;
+    background: transparent;
+    transition: transform .2s;
+    font-size: 30px;
+    padding: 7px;
+}
+
+.object:hover {
+    transform: scale(1.2);
+}
+
+.object.found {
+    filter: grayscale(1);
+    opacity: .5;
+    cursor: default;
+}
+
+.object.found::after {
+    content: "FOUND";
+    display: block;
+    font-size: 9px;
+    background: #267d61;
+    color: white;
+    border-radius: 5px;
+    padding: 3px;
+    font-weight: bold;
+}
+
+.person {
+    position: absolute;
+    font-size: 20px;
+    z-index: 2;
+}
+
+.lake {
+    position: absolute;
+    background: #4da8ce;
+    width: 180px;
+    height: 75px;
+    border-radius: 50%;
+    bottom: 15px;
+    right: 20px;
+    border: 5px solid #d2e9e9;
+}
+
+.sign {
+    position: absolute;
+    bottom: 5px;
+    left: 10px;
+    background: #f7f0d4;
+    padding: 8px;
+    border: 3px solid #856b4d;
+    font-size: 11px;
+    font-weight: bold;
+    transform: rotate(-3deg);
+}
+
+/* MODAL */
+
+#modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: #142e3bd9;
+    z-index: 20;
+    justify-content: center;
+    align-items: center;
+    padding: 15px;
+    overflow-y: auto;
+}
+
+#modal.show { display: flex; }
+
+.panel {
+    background: #f7fbfa;
+    width: 100%;
+    max-width: 650px;
+    padding: 25px;
+    border-radius: 16px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 10px 40px #0005;
+}
+
+.panel h2 { margin-top: 0; }
+
+.subtitle {
+    color: #607b84;
+    font-size: 14px;
+}
+
+.primary {
+    background: #277c81;
+    color: white;
+    border: 0;
+    border-radius: 8px;
+    padding: 12px 20px;
+    font-weight: bold;
+}
+
+.primary:hover { background: #1d6469; }
+
+.secondary {
+    background: #e3eeee;
+    border: 0;
+    padding: 10px 16px;
+    border-radius: 8px;
+}
+
+.game-area {
+    background: #e5f0ed;
+    border-radius: 12px;
+    padding: 20px;
+    margin: 18px 0;
+    text-align: center;
+}
+
+.game-area button {
+    margin: 5px;
+}
+
+/* HOUSE GAME */
+
+#houses {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin: 20px 0;
+}
+
+.house {
+    font-size: 40px;
+    border: 2px solid #b4c9c9;
+    border-radius: 10px;
+    background: white;
+    padding: 12px;
+    cursor: pointer;
+}
+
+.house.selected {
+    background: #c3e8d3;
+    border-color: #27875c;
+}
+
+#plane {
+    display: block;
+    font-size: 48px;
+    margin: 20px auto;
+    padding: 15px;
+    background: white;
+    border: 2px dashed #8caeb0;
+    border-radius: 12px;
+    width: 180px;
+}
+
+#plane.ready {
+    background: #c5ead4;
+}
+
+/* CLIMATE GAME */
+
+#iceArea {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin: 15px;
+}
+
+.ice {
+    padding: 14px;
+    font-size: 30px;
+    background: white;
+    border: 2px solid #9bc9dd;
+    border-radius: 10px;
+}
+
+#ocean {
+    background: #74b9dc;
+    color: #164b70;
+    padding: 35px;
+    border-radius: 50%;
+    max-width: 250px;
+    margin: 20px auto;
+    border: 5px solid #b8e1ef;
+    font-weight: bold;
+    min-height: 100px;
+}
+
+/* PIPE GAME */
+
+#pipes {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    max-width: 380px;
+    margin: 20px auto;
+}
+
+.pipe {
+    padding: 16px 8px;
+    border: 2px solid #9cb6bd;
+    border-radius: 9px;
+    background: white;
+    font-weight: bold;
+}
+
+.pipe.selected {
+    border-color: #278c81;
+    background: #c9e9df;
+}
+
+.pipe.done {
+    background: #a7ddc0;
+    border-color: #368a5a;
+}
+
+.explanation {
+    background: #e5f0ed;
+    border-left: 5px solid #279c91;
+    padding: 17px;
+    border-radius: 7px;
+    line-height: 1.65;
+    margin: 18px 0;
+}
+
+.explanation h3 { margin-top: 0; }
+
+@media(max-width: 600px) {
+    #town { height: 470px; }
+    .building { transform: scale(.8); }
+    .panel { padding: 18px; }
+    header h1 { font-size: 19px; }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <div>
+        <h1>WATER SCARCITY: FIND THE CAUSES</h1>
+        <p>A very serious investigation. Probably.</p>
+    </div>
+    <button id="reset" onclick="resetGame()">Restart game</button>
+</header>
+
+<main>
+    <div class="status">
+        <strong>Discoveries: <span id="count">0</span> / 3</strong>
+        <div class="progress">
+            <div id="progressFill"></div>
+        </div>
+        <strong id="percentage">0%</strong>
+    </div>
+
+    <p class="instructions">
+        Explore the town! Click on suspicious objects to investigate
+        their connection to water scarcity.
+    </p>
+
+    <section id="town">
+        <div class="grass"></div>
+
+        <div class="road horizontal"></div>
+        <div class="road vertical"></div>
+
+        <!-- Buildings -->
+        <div class="building" style="left:8%;top:9%">
+            <span class="window left"></span>
+            <span class="window right"></span>
+            <span class="building-label">SCHOOL</span>
+        </div>
+
+        <div class="building" style="left:70%;top:10%;background:#d6a5a0">
+            <span class="window left"></span>
+            <span class="window right"></span>
+            <span class="building-label">HOSPITAL</span>
+        </div>
+
+        <div class="building" style="left:8%;top:43%;background:#d6c28a">
+            <span class="window left"></span>
+            <span class="window right"></span>
+            <span class="building-label">SHOP</span>
+        </div>
+
+        <div class="building" style="left:72%;top:43%;background:#b3a0d3">
+            <span class="window left"></span>
+            <span class="window right"></span>
+            <span class="building-label">LIBRARY</span>
+        </div>
+
+        <!-- Trees -->
+        <div class="tree" style="left:28%;top:13%"></div>
+        <div class="tree" style="left:59%;top:14%"></div>
+        <div class="tree" style="left:31%;top:45%"></div>
+        <div class="tree" style="left:88%;top:30%"></div>
+        <div class="tree" style="left:56%;top:82%"></div>
+
+        <!-- People -->
+        <span class="person" style="left:22%;top:32%">●</span>
+        <span class="person" style="left:38%;top:29%">●</span>
+        <span class="person" style="left:65%;top:34%">●</span>
+        <span class="person" style="left:19%;top:78%">●</span>
+        <span class="person" style="left:60%;top:75%">●</span>
+        <span class="person" style="left:84%;top:77%">●</span>
+        <span class="person" style="left:50%;top:52%">●</span>
+        <span class="person" style="left:34%;top:84%">●</span>
+
+        <!-- Water -->
+        <div class="lake">WATER RESERVOIR</div>
+
+        <!-- Ordinary objects -->
+        <button class="object" style="left:35%;top:17%" title="Water fountain">
+            F
+        </button>
+
+        <button class="object" style="left:50%;top:33%" title="Car">
+            C
+        </button>
+
+        <button class="object" style="left:5%;top:76%" title="Park">
+            P
+        </button>
+
+        <button class="object" style="left:89%;top:53%" title="Bench">
+            B
+        </button>
+
+        <button class="object" style="left:55%;top:49%" title="Mailbox">
+            M
+        </button>
+
+        <button class="object" style="left:78%;top:79%" title="Boat">
+            V
+        </button>
+
+        <!-- Discoverable causes -->
+        <button class="object" id="overpopulation"
+            style="left:43%;top:5%"
+            onclick="startGame('population')"
+            title="Investigate the crowded town">
+            <span>HOUSE</span>
+        </button>
+
+        <button class="object" id="climate"
+            style="left:87%;top:12%"
+            onclick="startGame('climate')"
+            title="Investigate the strange weather">
+            <span>SUN</span>
+        </button>
+
+        <button class="object" id="infrastructure"
+            style="left:46%;top:75%"
+            onclick="startGame('pipes')"
+            title="Investigate the broken pipes">
+            <span>PIPE</span>
+        </button>
+
+        <div class="sign">
+            WELCOME TO WATERFORD<br>
+            Population: 85,000
+        </div>
+    </section>
+
+    <p class="subtitle">
+        Tip: Not everything in the town is important.
+        Some objects are just here to distract you.
+    </p>
+</main>
+
+<div id="modal">
+    <div class="panel" id="panel"></div>
+</div>
+
+<script>
+const found = {
+    population: false,
+    climate: false,
+    pipes: false
+};
+
+const selectedHouses = new Set();
+const completedPipes = new Set();
+
+let iceDropped = 0;
+let pipeSelection = null;
+
+const explanations = {
+    population: {
+        title: "OVERPOPULATION",
+        subtitle: "Too many people, not enough water!",
+        body: `
+            <h3>What is overpopulation?</h3>
+            Overpopulation occurs when the number of people in an
+            area grows beyond what its available resources can
+            comfortably support.
+
+            <h3>How does it cause water scarcity?</h3>
+            Every person needs water for drinking, cooking, washing,
+            sanitation and other everyday activities.
+
+            As populations increase, the total demand for freshwater
+            also increases. Cities may struggle to provide enough
+            water for everyone, especially when their water supplies
+            and infrastructure cannot expand quickly enough.
+
+            <h3>Real-world consequences</h3>
+            <ul>
+                <li>Increased pressure on rivers, lakes and groundwater.</li>
+                <li>Greater competition between households, farms and industries.</li>
+                <li>Overuse of groundwater reserves.</li>
+                <li>Greater difficulty providing reliable water services.</li>
+            </ul>
+
+            <h3>Possible solutions</h3>
+            Better urban planning, efficient water use, improved
+            infrastructure and sustainable management of freshwater
+            resources can help cities meet growing demand.
+        `
+    },
+
+    climate: {
+        title: "CLIMATE CHANGE",
+        subtitle: "The planet's thermostat is having problems.",
+        body: `
+            <h3>What is climate change?</h3>
+            Climate change refers to long-term changes in Earth's
+            temperatures and weather patterns. Modern global warming
+            is primarily caused by human activities that release
+            greenhouse gases.
+
+            <h3>How does it cause water scarcity?</h3>
+            Rising temperatures increase evaporation from land and
+            water surfaces. Changes in rainfall patterns can also
+            cause some regions to experience longer or more severe
+            droughts.
+
+            Glaciers and seasonal snowpacks are important freshwater
+            sources for many communities. Their decline can disrupt
+            the timing and amount of water available downstream.
+
+            <h3>Real-world consequences</h3>
+            <ul>
+                <li>More frequent or severe droughts in some regions.</li>
+                <li>Unpredictable rainfall.</li>
+                <li>Reduced snow and glacier reserves over time.</li>
+                <li>Increased pressure on agricultural water supplies.</li>
+            </ul>
+
+            <h3>Possible solutions</h3>
+            Reducing greenhouse gas emissions, protecting water
+            catchments, improving water storage and developing
+            drought-resilient water systems can reduce risks.
+        `
+    },
+
+    pipes: {
+        title: "LACK OF WATER INFRASTRUCTURE",
+        subtitle: "The plumbing is not doing particularly well.",
+        body: `
+            <h3>What is water infrastructure?</h3>
+            Water infrastructure includes the physical systems
+            used to collect, treat, store and distribute water.
+
+            This includes reservoirs, treatment plants, pumps,
+            pipes and water distribution networks.
+
+            <h3>How does poor infrastructure cause water scarcity?</h3>
+            Old or damaged pipes can leak large amounts of treated
+            water before it reaches households.
+
+            Communities without adequate treatment facilities,
+            storage systems or distribution networks may struggle
+            to access reliable and safe water, even when water
+            sources exist nearby.
+
+            <h3>Real-world consequences</h3>
+            <ul>
+                <li>Water lost through leaking distribution pipes.</li>
+                <li>Unreliable access to drinking water.</li>
+                <li>Contamination risks from damaged systems.</li>
+                <li>Some communities receiving much less water than others.</li>
+            </ul>
+
+            <h3>Possible solutions</h3>
+            Maintaining and replacing ageing pipes, building
+            appropriate treatment facilities, improving water
+            storage and investing in distribution networks can
+            make water supplies more reliable.
+        `
+    }
+};
+
+function openModal(content) {
+    document.getElementById("panel").innerHTML = content;
+    document.getElementById("modal").classList.add("show");
+}
+
+function closeModal() {
+    document.getElementById("modal").classList.remove("show");
+}
+
+function startGame(type) {
+    if (found[type]) return;
+
+    if (type === "population") populationGame();
+    if (type === "climate") climateGame();
+    if (type === "pipes") pipeGame();
+}
+
+// ============================
+// GAME 1: OVERPOPULATION
+// ============================
+
+function populationGame() {
+    selectedHouses.clear();
+
+    openModal(`
+        <h2>Urban Expansion Simulator</h2>
+        <p class="subtitle">
+            Congratulations! You've been promoted to city planner.
+            Your salary is one imaginary dollar.
+        </p>
+
+        <div class="game-area">
+            <h3>Build three houses</h3>
+            <p>Click three houses to select them.</p>
+
+            <div id="houses">
+                ${[1,2,3,4,5].map(n =>
+                    `<button class="house" onclick="selectHouse(${n},this)">
+                        HOUSE ${n}
+                    </button>`
+                ).join("")}
+            </div>
+
+            <p id="houseCount">Houses built: 0 / 3</p>
+
+            <button id="plane" onclick="sendPlane()">
+                AIRCRAFT
+            </button>
+
+            <p id="planeMessage">Send your houses to the distant town!</p>
+        </div>
+
+        <button class="secondary" onclick="closeModal()">Give up</button>
+    `);
+}
+
+function selectHouse(n, button) {
+    if (selectedHouses.has(n)) {
+        selectedHouses.delete(n);
+        button.classList.remove("selected");
+    } else if (selectedHouses.size < 3) {
+        selectedHouses.add(n);
+        button.classList.add("selected");
+    }
+
+    document.getElementById("houseCount").textContent =
+        "Houses built: " + selectedHouses.size + " / 3";
+
+    document.getElementById("plane").classList.toggle(
+        "ready", selectedHouses.size === 3
+    );
+}
+
+function sendPlane() {
+    if (selectedHouses.size !== 3) {
+        document.getElementById("planeMessage").textContent =
+            "You need exactly three houses first!";
+        return;
+    }
+
+    completeGame("population");
+}
+
+// ============================
+// GAME 2: CLIMATE CHANGE
+// ============================
+
+function climateGame() {
+    iceDropped = 0;
+
+    openModal(`
+        <h2>Emergency Ice Delivery</h2>
+        <p class="subtitle">
+            The planet is getting warmer. We have a highly
+            questionable solution.
+        </p>
+
+        <div class="game-area">
+            <h3>Drop five ice cubes into the ocean!</h3>
+
+            <div id="iceArea">
+                ${[1,2,3,4,5].map(n =>
+                    `<button class="ice" onclick="dropIce(this)">
+                        ICE
+                    </button>`
+                ).join("")}
+            </div>
+
+            <div id="ocean">
+                OCEAN
+                <p id="iceCount">Ice delivered: 0 / 5</p>
+            </div>
+
+            <p id="iceMessage">Click the ice cubes to deliver them.</p>
+        </div>
+
+        <button class="secondary" onclick="closeModal()">Give up</button>
+    `);
+}
+
+function dropIce(button) {
+    if (button.disabled) return;
+
+    button.disabled = true;
+    button.style.opacity = ".3";
+    button.style.textDecoration = "line-through";
+
+    iceDropped++;
+
+    document.getElementById("iceCount").textContent =
+        "Ice delivered: " + iceDropped + " / 5";
+
+    if (iceDropped === 5) {
+        document.getElementById("iceMessage").textContent =
+            "Congratulations! You have cooled approximately 0.0000001% of the ocean.";
+        setTimeout(() => completeGame("climate"), 700);
+    }
+}
+
+// ============================
+// GAME 3: INFRASTRUCTURE
+// ============================
+
+const pipePairs = [
+    ["SOURCE A", "HOME A"],
+    ["SOURCE B", "HOME B"],
+    ["SOURCE C", "HOME C"]
+];
+
+function pipeGame() {
+    completedPipes.clear();
+    pipeSelection = null;
+
+    openModal(`
+        <h2>Emergency Plumbing Department</h2>
+        <p class="subtitle">
+            Three houses have lost their water supply.
+            Connect the pipes to restore service.
+        </p>
+
+        <div class="game-area">
+            <h3>Connect matching endpoints</h3>
+
+            <p>Select one source, then its matching destination.</p>
+
+            <div id="pipes">
+                <button class="pipe" onclick="selectPipe('SOURCE A',this)">SOURCE A</button>
+                <button class="pipe" onclick="selectPipe('HOME C',this)">HOME C</button>
+
+                <button class="pipe" onclick="selectPipe('SOURCE B',this)">SOURCE B</button>
+                <button class="pipe" onclick="selectPipe('HOME A',this)">HOME A</button>
+
+                <button class="pipe" onclick="selectPipe('SOURCE C',this)">SOURCE C</button>
+                <button class="pipe" onclick="selectPipe('HOME B',this)">HOME B</button>
+            </div>
+
+            <p id="pipeCount">Pipes repaired: 0 / 3</p>
+            <p id="pipeMessage">No leaks repaired yet.</p>
+        </div>
+
+        <button class="secondary" onclick="closeModal()">Give up</button>
+    `);
+}
+
+function selectPipe(name, button) {
+    if (button.classList.contains("done")) return;
+
+    if (!pipeSelection) {
+        if (!name.startsWith("SOURCE")) {
+            document.getElementById("pipeMessage").textContent =
+                "Start by selecting a water source!";
+            return;
+        }
+
+        pipeSelection = name;
+        button.classList.add("selected");
+
+        document.getElementById("pipeMessage").textContent =
+            "Now select the matching destination.";
+        return;
+    }
+
+    if (name.startsWith("SOURCE")) {
+        document.querySelectorAll(".pipe").forEach(b =>
+            b.classList.remove("selected")
+        );
+
+        pipeSelection = name;
+        button.classList.add("selected");
+        return;
+    }
+
+    const sourceLetter = pipeSelection.slice(-1);
+    const destinationLetter = name.slice(-1);
+
+    if (sourceLetter === destinationLetter) {
+        completedPipes.add(sourceLetter);
+
+        document.querySelectorAll(".pipe").forEach(b => {
+            if (
+                b.textContent.endsWith(sourceLetter) &&
+                !b.classList.contains("done")
+            ) {
+                b.classList.remove("selected");
+                b.classList.add("done");
+            }
+        });
+
+        document.getElementById("pipeMessage").textContent =
+            "Connection successful! Water restored.";
+
+    } else {
+        document.getElementById("pipeMessage").textContent =
+            "Incorrect connection! Check the source and try again.";
+
+        document.querySelectorAll(".pipe").forEach(b =>
+            b.classList.remove("selected")
+        );
+    }
+
+    pipeSelection = null;
+
+    document.getElementById("pipeCount").textContent =
+        "Pipes repaired: " + completedPipes.size + " / 3";
+
+    if (completedPipes.size === 3) {
+        setTimeout(() => completeGame("pipes"), 600);
+    }
+}
+
+// ============================
+// COMPLETION AND EXPLANATIONS
+// ============================
+
+function completeGame(type) {
+    if (found[type]) return;
+
+    found[type] = true;
+
+    const target = document.getElementById(
+        type === "population" ? "overpopulation" :
+        type === "climate" ? "climate" :
+        "infrastructure"
+    );
+
+    target.classList.add("found");
+    target.disabled = true;
+
+    updateProgress();
+
+    const info = explanations[type];
+
+    openModal(`
+        <div style="text-align:center">
+            <h2>DISCOVERY UNLOCKED!</h2>
+            <p style="font-size:38px">CASE SOLVED</p>
+            <h2>${info.title}</h2>
+            <p class="subtitle">${info.subtitle}</p>
+        </div>
+
+        <div class="explanation">
+            ${info.body}
+        </div>
+
+        <button class="primary" onclick="afterExplanation()">
+            Continue investigation
+        </button>
+    `);
+}
+
+function afterExplanation() {
+    closeModal();
+
+    if (Object.values(found).every(Boolean)) {
+        setTimeout(showVictory, 300);
+    }
+}
+
+function updateProgress() {
+    const total = Object.values(found).filter(Boolean).length;
+    const percentage = Math.round(total / 3 * 100);
+
+    document.getElementById("count").textContent = total;
+    document.getElementById("percentage").textContent =
+        percentage + "%";
+
+    document.getElementById("progressFill").style.width =
+        percentage + "%";
+}
+
+function showVictory() {
+    openModal(`
+        <div style="text-align:center">
+            <h1>INVESTIGATION COMPLETE</h1>
+            <p style="font-size:55px">CASE CLOSED</p>
+            <h2>You've discovered all three causes!</h2>
+        </div>
+
+        <div class="explanation">
+            <h3>What have we learned?</h3>
+            Water scarcity is a complex problem influenced by
+            several interconnected factors.
+
+            Population growth increases demand, climate change
+            affects freshwater availability, and inadequate
+            infrastructure prevents water from reaching people.
+
+            Understanding these causes is an important step
+            towards finding sustainable solutions.
+        </div>
+
+        <p style="text-align:center">
+            Congratulations, Water Investigator.
+        </p>
+
+        <button class="primary" onclick="resetGame()">
+            Play again
+        </button>
+    `);
+}
+
+function resetGame() {
+    Object.keys(found).forEach(key => found[key] = false);
+
+    document.querySelectorAll(".object").forEach(button => {
+        button.classList.remove("found");
+        button.disabled = false;
+    });
+
+    selectedHouses.clear();
+    completedPipes.clear();
+
+    updateProgress();
+    closeModal();
+}
+
+</script>
+</body>
+</html>
